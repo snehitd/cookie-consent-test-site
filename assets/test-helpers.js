@@ -16,7 +16,7 @@
     // Small floating inspector button
     const btn = document.createElement('button');
     btn.textContent = 'Inspect cookies & scripts';
-    btn.style.cssText = 'position:fixed;bottom:16px;right:16px;' +
+    btn.style.cssText = 'position:fixed;top:16px;right:16px;' +
       'padding:10px 14px;background:#1b4f72;color:#fff;' +
       'border:none;border-radius:4px;cursor:pointer;z-index:9999;';
     btn.onclick = function() {
