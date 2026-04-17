@@ -27,7 +27,7 @@ window.PrivacyConsent = (function() {
   // Each entry aligns with the Klaro service name in seqrite-config.js.
   // default reflects the admin-configured defaultConsent (Opt In / Opt Out).
   var _services = [
-    {"name":"other","category":"other","default":false},
+    {"name":"others","category":"others","default":false},
     {"name":"analytics","category":"analytics","default":false}
   ];
 
