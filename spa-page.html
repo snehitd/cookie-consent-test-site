@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Site — SPA Page</title>
   <link rel="stylesheet" href="assets/style.css">
-  <!-- AFTER: Seqrite consent scripts added (§10.2) — required for PrivacyConsent API -->
   <link rel="stylesheet" href="seqrite-config.css"/>
   <script data-config="seqriteConfig" type="application/javascript" src="seqrite.js"></script>
   <script type="application/javascript" src="seqrite-config.js"></script>
@@ -21,45 +20,17 @@
     <a href="privacy-policy.html">Privacy Policy</a>
   </nav>
   <div class="warning">
-    <strong>&#9888; API-based enforcement active.</strong>
-    Markup enforcement does not apply here — scripts load dynamically on button
-    click (§6.3: markup approach does not work for dynamically-loaded scripts).
-    PrivacyConsent.getConsent() guards each button handler instead.
+    <strong>&#9888; Banner only — no enforcement.</strong>
+    Consent banner is shown but scripts load freely on button click regardless of choice.
   </div>
   <h2>Load analytics on demand</h2>
   <p>Click the button to dynamically load Google Analytics:</p>
   <button id="loadAnalytics">Load Google Analytics</button>
   <button id="loadMarketing">Load Marketing Script</button>
   <script>
-    // BEFORE: GA4 loaded unconditionally on button click — no consent check
-    /*
     document.getElementById('loadAnalytics').addEventListener('click', function() {
       if (window._gaLoaded) {
         alert('Already loaded'); return;
-      }
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-89RWJTCPLZ';
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function() { dataLayer.push(arguments); };
-      gtag('js', new Date());
-      gtag('config', 'G-89RWJTCPLZ');
-      window._gaLoaded = true;
-      console.log('GA loaded dynamically');
-    });
-    */
-    // AFTER: API-based enforcement — load GA4 only if "analytics" category is
-    // consented (§6.3: markup approach does not work for dynamic scripts;
-    // §6.2 Pattern 1: check consent at point of use)
-    document.getElementById('loadAnalytics').addEventListener('click', function() {
-      if (window._gaLoaded) {
-        alert('Already loaded'); return;
-      }
-      if (!PrivacyConsent.getConsent('analytics')) {
-        alert('Analytics consent not granted. Please accept analytics cookies first.');
-        console.warn('GA4 load blocked — "analytics" consent not given');
-        return;
       }
       var s = document.createElement('script');
       s.async = true;
@@ -73,22 +44,7 @@
       console.log('GA loaded dynamically');
     });
 
-    // BEFORE: marketing cookies set unconditionally on button click — no consent check
-    /*
     document.getElementById('loadMarketing').addEventListener('click', function() {
-      document.cookie = 'campaign_id=spring2026; path=/; max-age=3600';
-      document.cookie = 'ab_variant=B; path=/; max-age=3600';
-      console.log('Marketing cookies set');
-    });
-    */
-    // AFTER: API-based enforcement — set cookies only if "others" category is
-    // consented (§6.3; campaign_id and ab_variant map to "others" in seqrite-config.js)
-    document.getElementById('loadMarketing').addEventListener('click', function() {
-      if (!PrivacyConsent.getConsent('others')) {
-        alert('Others consent not granted. Please accept other cookies first.');
-        console.warn('Marketing cookies blocked — "others" consent not given');
-        return;
-      }
       document.cookie = 'campaign_id=spring2026; path=/; max-age=3600';
       document.cookie = 'ab_variant=B; path=/; max-age=3600';
       console.log('Marketing cookies set');

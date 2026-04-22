@@ -5,14 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Site — GTM Page</title>
   <link rel="stylesheet" href="assets/style.css">
-  <!-- AFTER: Seqrite consent scripts added (§10.2) — must load BEFORE GTM blocked snippet -->
   <link rel="stylesheet" href="seqrite-config.css"/>
   <script data-config="seqriteConfig" type="application/javascript" src="seqrite.js"></script>
   <script type="application/javascript" src="seqrite-config.js"></script>
   <script defer src="seqrite-enforcement.js"></script>
-
-  <!-- BEFORE: standard GTM head snippet — loads container unconditionally -->
-  <!--
+  <!-- Google Tag Manager -->
   <script>
   (function(w,d,s,l,i){w[l]=w[l]||[];
   w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
@@ -23,35 +20,16 @@
   f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-N8M7CRQR');
   </script>
-  -->
-  <!-- AFTER: Klaro-blocked GTM container (§10.4) — gtm.js only loads when "analytics"
-       category is consented. data-name="analytics" matches seqrite-config.js services array.
-       Do NOT keep the standard snippet above alongside this — it causes double-firing. -->
-  <script type="text/plain"
-          data-type="text/javascript"
-          data-name="analytics"
-          data-src="https://www.googletagmanager.com/gtm.js?id=GTM-N8M7CRQR">
-  </script>
+  <!-- End Google Tag Manager -->
 </head>
 <body>
-  <!-- BEFORE: standard GTM noscript fallback — loads unconditionally -->
-  <!--
+  <!-- Google Tag Manager (noscript) -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8M7CRQR"
             height="0" width="0"
             style="display:none;visibility:hidden"></iframe>
   </noscript>
-  -->
-  <!-- AFTER: Klaro-blocked noscript fallback (§10.4) — src moved to data-src,
-       data-name="analytics" gates it on the same category as the head snippet -->
-  <noscript>
-    <iframe data-src="https://www.googletagmanager.com/ns.html?id=GTM-N8M7CRQR"
-            data-name="analytics"
-            height="0" width="0"
-            style="display:none;visibility:hidden">
-    </iframe>
-  </noscript>
-
+  <!-- End Google Tag Manager (noscript) -->
   <h1>Cookie Consent Test Site — GTM Page</h1>
   <nav>
     <a href="index.html">Home</a>
@@ -61,60 +39,14 @@
     <a href="privacy-policy.html">Privacy Policy</a>
   </nav>
   <div class="warning">
-    <strong>&#9888; GTM container enforcement active.</strong>
-    GTM container (GTM-N8M7CRQR) is blocked by Klaro until "analytics" is consented.
-    GTM workspace must also be configured with Custom Event Triggers — see §10.5 notes below.
+    <strong>&#9888; Banner only — no enforcement.</strong>
+    Consent banner is shown but GTM container loads freely regardless of choice.
   </div>
   <h2>What loads on this page</h2>
   <ul>
-    <li>Google Tag Manager container (GTM-N8M7CRQR) — blocked until "analytics" consented</li>
-    <li>Tags inside GTM fire only after consent event triggers are configured (§10.5)</li>
+    <li>Google Tag Manager container (GTM-N8M7CRQR)</li>
+    <li>Whatever tags are configured inside the GTM dashboard</li>
   </ul>
-
-  <!--
-  ═══════════════════════════════════════════════════════════════════
-  §10.5 — GTM WORKSPACE CONFIGURATION REQUIRED (dashboard steps)
-  These are NOT HTML changes. Do these in https://tagmanager.google.com
-  ═══════════════════════════════════════════════════════════════════
-
-  STEP 10.5.1 — Create a Custom Event Trigger for each consent category:
-
-    Trigger 1:
-      Type:       Custom Event
-      Event Name: privacyconsent-analytics-accepted
-      Fires on:   All Custom Events
-      Name:       "Seqrite: Analytics Accepted"
-
-    (Repeat pattern for other categories if added later:
-      privacyconsent-others-accepted   → "Seqrite: Others Accepted"
-      privacyconsent-analytics-rejected → "Seqrite: Analytics Rejected")
-
-  STEP 10.5.2 — Assign triggers to your GA4 tag:
-
-    Tag: GA4 Configuration (or "GA4 – All Pages" created in Part 5)
-      REMOVE:  existing "All Pages" trigger
-      ADD:     "Seqrite: Analytics Accepted" trigger
-      Save.
-
-  STEP 10.5.3 — Test in GTM Preview Mode:
-
-    1. GTM Workspace → Preview → enter site URL → Connect
-    2. WITHOUT consenting:
-         → gtm.js must NOT appear in Network tab
-         → GA4 tag must NOT fire in GTM debug panel
-    3. Accept "Analytics" consent:
-         → privacyconsent-analytics-accepted appears in dataLayer (GTM debug)
-         → GA4 tag fires as a result
-    4. Reject "Analytics":
-         → privacyconsent-analytics-rejected appears in dataLayer
-         → GA4 tag does NOT fire again
-    5. Publish GTM container after verification.
-
-  enforcement.js pushes these dataLayer events automatically — no extra
-  site-owner code needed beyond the HTML changes above.
-  ═══════════════════════════════════════════════════════════════════
-  -->
-
   <h2>Simulated e-commerce event</h2>
   <button onclick="simulatePurchase()">Fire purchase event</button>
   <script>
