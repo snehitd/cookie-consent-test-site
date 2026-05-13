@@ -3,7 +3,7 @@ let userLang = (navigator.language || (navigator).userLanguage || 'en').split('-
 console.log("Browser Language Code: ", userLang);
 window.klaroConfig = {
   "consentManagerId": "6a045c6ef725b168afa55b56",
-  "uuid": "10459ccd-1f1d-4771-9e30-b3e8e9401281",
+  "uuid": "3824181d-6c14-4ae2-aaad-8219f0cf6288",
   "domain": "https://perf.pre-dataprivacy.com/cmapi",
   "version": 1,
   "elementID": "SEQRITE",
