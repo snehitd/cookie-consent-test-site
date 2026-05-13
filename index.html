@@ -13,6 +13,18 @@
     gtag('js', new Date());
     gtag('config', 'G-89RWJTCPLZ');
   </script>
+  <!-- Functional cookies: user preferences & session state -->
+  <script>
+    document.cookie = 'user_prefs={"lang":"en","theme":"light"}; path=/; max-age=86400';
+    document.cookie = 'session_id=sess-abc123xyz; path=/; max-age=1800';
+    console.log('Functional cookies set: user_prefs, session_id');
+  </script>
+  <!-- Marketing cookies: ad retargeting & conversion tracking -->
+  <script>
+    document.cookie = '_fbp=fb.1.' + Date.now() + '.1234567890; path=/; max-age=7776000';
+    document.cookie = '_gcl_au=1.1.987654321.' + Date.now() + '; path=/; max-age=7776000';
+    console.log('Marketing cookies set: _fbp (Facebook Pixel), _gcl_au (Google Ads)');
+  </script>
   <!-- Fake marketing pixel (inline script that sets a cookie) -->
   <script>
     document.cookie = 'marketing_id=test-user-123; path=/; max-age=3600';
@@ -29,15 +41,18 @@
     <a href="privacy-policy.html">Privacy Policy</a>
   </nav>
   <div class="warning">
-    <strong>&#9888; No consent enforcement yet.</strong>
-    All tracking scripts on this page load freely. Your job is to add
-    consent enforcement on top of this baseline.
+    <strong>&#9888; No banner, no enforcement.</strong>
+    No consent banner is shown and tracking scripts load freely.
   </div>
   <h2>What loads on this page</h2>
   <ul>
     <li>Google Analytics 4 (external + inline init)</li>
-    <li>Inline marketing pixel script (sets a cookie)</li>
     <li>Tracking image pixel (see below)</li>
+    <li><strong>[Functional]</strong> <code>user_prefs</code> — stores language &amp; theme preference (1 day)</li>
+    <li><strong>[Functional]</strong> <code>session_id</code> — maintains session state (30 min)</li>
+    <li><strong>[Marketing]</strong> <code>_fbp</code> — Facebook Pixel retargeting (90 days)</li>
+    <li><strong>[Marketing]</strong> <code>_gcl_au</code> — Google Ads conversion linker (90 days)</li>
+    <li><strong>[Marketing]</strong> <code>marketing_id</code> — fake marketing pixel (1 hour)</li>
   </ul>
   <h2>Tracking image pixel</h2>
   <img src="https://www.google-analytics.com/collect?v=1&t=event&tid=G-89RWJTCPLZ&cid=555"
