@@ -25,6 +25,18 @@
     document.cookie = '_gcl_au=1.1.987654321.' + Date.now() + '; path=/; max-age=7776000';
     console.log('Marketing cookies set: _fbp (Facebook Pixel), _gcl_au (Google Ads)');
   </script>
+  <!-- Meta Pixel cookies: browser ID + click ID -->
+  <script>
+    document.cookie = '_fbc=fb.1.' + Date.now() + '.IwAR0test123; path=/; max-age=7776000';
+    console.log('Meta Pixel click-ID cookie set: _fbc');
+  </script>
+  <!-- Bing Ads UET cookies: session, visitor, Microsoft User ID -->
+  <script>
+    document.cookie = '_uetsid=uet-sess-' + Math.random().toString(36).slice(2) + '; path=/; max-age=1800';
+    document.cookie = '_uetvid=uet-vid-'  + Math.random().toString(36).slice(2) + '; path=/; max-age=15552000';
+    document.cookie = 'MUID=MUID-' + Math.random().toString(36).slice(2).toUpperCase() + '; path=/; max-age=31536000';
+    console.log('Bing Ads UET cookies set: _uetsid, _uetvid, MUID');
+  </script>
   <!-- Fake marketing pixel (inline script that sets a cookie) -->
   <script>
     document.cookie = 'marketing_id=test-user-123; path=/; max-age=3600';
@@ -50,8 +62,12 @@
     <li>Tracking image pixel (see below)</li>
     <li><strong>[Functional]</strong> <code>user_prefs</code> — stores language &amp; theme preference (1 day)</li>
     <li><strong>[Functional]</strong> <code>session_id</code> — maintains session state (30 min)</li>
-    <li><strong>[Marketing]</strong> <code>_fbp</code> — Facebook Pixel retargeting (90 days)</li>
+    <li><strong>[Marketing]</strong> <code>_fbp</code> — Meta Pixel browser ID (90 days)</li>
+    <li><strong>[Marketing]</strong> <code>_fbc</code> — Meta Pixel click ID (90 days)</li>
     <li><strong>[Marketing]</strong> <code>_gcl_au</code> — Google Ads conversion linker (90 days)</li>
+    <li><strong>[Marketing]</strong> <code>_uetsid</code> — Bing Ads UET session ID (30 min)</li>
+    <li><strong>[Marketing]</strong> <code>_uetvid</code> — Bing Ads UET visitor ID (180 days)</li>
+    <li><strong>[Marketing]</strong> <code>MUID</code> — Microsoft User ID (1 year)</li>
     <li><strong>[Marketing]</strong> <code>marketing_id</code> — fake marketing pixel (1 hour)</li>
   </ul>
   <h2>Tracking image pixel</h2>
