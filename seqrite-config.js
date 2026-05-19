@@ -3,13 +3,13 @@ let userLang = (navigator.language || (navigator).userLanguage || 'en').split('-
 console.log("Browser Language Code: ", userLang);
 window.klaroConfig = {
   "consentManagerId": "6a0ab9c7882ffd424c3bba21",
-  "uuid": "f959366b-49d8-4cab-8eb9-30dd62904e6f",
+  "uuid": "5dd321cd-e5e4-4586-9c9d-7885ac832aff",
   "domain": "https://devop.pre-dataprivacy.com/cmapi",
   "version": 1,
   "elementID": "SEQRITE",
   lang: userLang,
   "storageMethod": "cookie",
-  "storageName": "https://cookie-consent-enforcement-sdp.netlify.app/",
+  "storageName": "cookie-consent-enforcement-sdp_netlify_app_",
   "cookieExpiresAfterDays": 365,
   "default": true,
   "mustConsent": false,
