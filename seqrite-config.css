@@ -16,8 +16,8 @@
       --overlay-body-text-color: #43436c;
       --overlay-body-background-color: #f9f9ff;
       --overlay-position-left: auto;
-      --overlay-position-Top: auto;
-      --overlay-pos: fixed;
+      --overlay-position-Top: 10px;
+      --overlay-pos: absolute;
       --overlay-max-width-custom: revert-layer;;
     }
     
