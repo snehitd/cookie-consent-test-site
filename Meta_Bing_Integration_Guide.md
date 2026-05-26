@@ -100,25 +100,28 @@ Replace `YOUR_PIXEL_ID` with the Pixel ID from step 3.2.
 After creating the tag, click **View tag** to see the installation snippet:
 
 ```html
-<!-- Microsoft UET Tag (Tag ID: 343251198) -->
+<!-- Microsoft UET Tag -->
 <script>
-  (function(w, d, t, u, o) {
-    w[u] = w[u] || [], o.ts = (new Date).getTime();
-    var n = d.createElement(t);
-    n.src = "https://bat.bing.net/bat.js?ti=" + o.ti + ("uetq" != u ? "&q=" + u : ""),
-    n.async = 1,
-    n.onload = n.onreadystatechange = function() {
-      var s = this.readyState;
-      s && "loaded" !== s && "complete" !== s ||
-      (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null)
-    };
-    var i = d.getElementsByTagName(t)[0];
-    i.parentNode.insertBefore(n, i);
-  })(window, document, "script", "uetq", { ti: "343251198", enableAutoSpaTracking: true });
+  (function(w,d,t,r,u){
+    var f,n,i;
+    w[u]=w[u]||[],f=function(){
+      var o={ti:"YOUR_TAG_ID"};
+      o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")
+    },
+    n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){
+      var s=this.readyState;
+      s&&s!=="loaded"&&s!=="complete"||(f(),n.onreadystatechange=null)
+    },
+    i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)
+  })(window,document,"script","//bat.bing.com/bat.js","uetq");
 </script>
+<noscript>
+  <img src="//bat.bing.com/action/0?ti=YOUR_TAG_ID&Ver=2" height="0" width="0"
+       style="display:none; visibility:hidden;" />
+</noscript>
 ```
 
-Tag ID used: `343251198`. `enableAutoSpaTracking: true` is included so page views are tracked automatically on SPA route changes.
+Replace `YOUR_TAG_ID` with the Tag ID from step 4.2.
 
 ### 4.4 Cookies Set by Bing Ads UET
 
@@ -147,25 +150,16 @@ Added to `<head>` alongside the existing marketing cookie scripts:
   console.log('Meta Pixel click-ID cookie set: _fbc');
 </script>
 
-<!-- Bing Ads UET (Tag ID: 343251198) — sets _uetsid, _uetvid, MUID on load -->
+<!-- Bing Ads UET cookies: session, visitor, Microsoft User ID -->
 <script>
-  (function(w, d, t, u, o) {
-    w[u] = w[u] || [], o.ts = (new Date).getTime();
-    var n = d.createElement(t);
-    n.src = "https://bat.bing.net/bat.js?ti=" + o.ti + ("uetq" != u ? "&q=" + u : ""),
-    n.async = 1,
-    n.onload = n.onreadystatechange = function() {
-      var s = this.readyState;
-      s && "loaded" !== s && "complete" !== s ||
-      (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null)
-    };
-    var i = d.getElementsByTagName(t)[0];
-    i.parentNode.insertBefore(n, i);
-  })(window, document, "script", "uetq", { ti: "343251198", enableAutoSpaTracking: true });
+  document.cookie = '_uetsid=uet-sess-' + Math.random().toString(36).slice(2) + '; path=/; max-age=1800';
+  document.cookie = '_uetvid=uet-vid-'  + Math.random().toString(36).slice(2) + '; path=/; max-age=15552000';
+  document.cookie = 'MUID=MUID-' + Math.random().toString(36).slice(2).toUpperCase() + '; path=/; max-age=31536000';
+  console.log('Bing Ads UET cookies set: _uetsid, _uetvid, MUID');
 </script>
 ```
 
-Both real tags are used — Meta Pixel ID `1995676894381395` and Bing UET Tag ID `343251198`. `_fbp` is set automatically by `fbevents.js`; `_uetsid`, `_uetvid`, and `MUID` are set automatically by `bat.js`.
+`_fbp` was already present from the earlier marketing cookie additions.
 
 ---
 
@@ -193,20 +187,12 @@ Wrap the Meta Pixel and Bing UET script tags with `type="text/plain"` and `data-
 </script>
 
 <!-- Bing Ads UET — blocked until "marketing" consent granted -->
+<script type="text/plain" data-type="text/javascript" data-name="marketing"
+        data-src="//bat.bing.com/bat.js">
+</script>
 <script type="text/plain" data-type="text/javascript" data-name="marketing">
-  (function(w, d, t, u, o) {
-    w[u] = w[u] || [], o.ts = (new Date).getTime();
-    var n = d.createElement(t);
-    n.src = "https://bat.bing.net/bat.js?ti=" + o.ti + ("uetq" != u ? "&q=" + u : ""),
-    n.async = 1,
-    n.onload = n.onreadystatechange = function() {
-      var s = this.readyState;
-      s && "loaded" !== s && "complete" !== s ||
-      (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null)
-    };
-    var i = d.getElementsByTagName(t)[0];
-    i.parentNode.insertBefore(n, i);
-  })(window, document, "script", "uetq", { ti: "343251198", enableAutoSpaTracking: true });
+  window.uetq = window.uetq || [];
+  window.uetq.push('pageLoad');
 </script>
 ```
 
