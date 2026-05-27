@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Site — Google Cookies</title>
+  <link rel="stylesheet" href="assets/style.css">
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION A — Google Tag Manager (GTM-N8M7CRQR)
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Loads the GTM container script from googletagmanager.com.
+    • The container fires all PUBLISHED tags automatically on page load:
+        Tag 1  — GA4 (Stream 1, G-89RWJTCPLZ)  → sets _ga, _ga_89RWJTCPLZ
+        Tag 9  — Conversion Linker              → sets _gcl_au, gtm-session-start
+        Tag 8  — Meta Pixel (via GTM)           → sets _fbp
+    • No tag runs if it is paused or unpublished in the GTM dashboard.
+  Cookies produced (via GTM tags, not this script itself):
+    _ga               Analytics   GA4 client ID            2 years
+    _ga_89RWJTCPLZ    Analytics   GA4 session companion    2 years
+    _gcl_au           Marketing   Google conversion linker 90 days
+    gtm-session-start Functional  GTM first-party session  session
+    _fbp              Marketing   Meta Pixel browser ID    90 days
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];
+  w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+  var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+  j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+  f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-N8M7CRQR');
+  </script>
+  <!-- End Section A -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION B — GA4 Stream 2 (G-01XNDLZCYQ) — Direct tag (no GTM)
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Loads gtag.js for a SECOND GA4 property / data stream.
+    • Runs independently of GTM — useful for testing multi-stream setups
+      or verifying a second property ID before wiring it into GTM.
+    • The first gtag('config') call creates the session on this stream.
+  Cookies produced:
+    _ga               Analytics   GA4 client ID (shared with Stream 1)  2 years
+    _ga_01XNDLZCYQ    Analytics   GA4 session for stream 2              2 years
+  Note: _ga is shared — one cookie covers all GA4 properties on the same
+  domain. Each stream gets its own _ga_<ID> session companion.
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01XNDLZCYQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-01XNDLZCYQ');
+  </script>
+  <!-- End Section B -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION C — Google Consent Mode v2 (reference — not enforced here)
+  ══════════════════════════════════════════════════════════════════════════
+  On the baseline (no-enforcement) site this section is informational.
+  On the enforcement branch, these defaults would be set BEFORE GA4/GTM
+  loads and updated after each consent interaction.
+
+  Consent signals and the cookies they gate:
+    analytics_storage    → _ga, _ga_<ID>     (GA4 measurement)
+    ad_storage           → _gcl_au, _gcl_aw  (Google Ads / conversion linker)
+    ad_user_data         → signals sent to Google Ads for audience building
+    ad_personalization   → remarketing / personalised ads
+    functionality_storage → functional cookies (not used by Google scripts)
+    security_storage     → always true; used by reCAPTCHA etc.
+
+  Enforcement code (enforcement branch only):
+    gtag('consent','default',{
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      wait_for_update: 500
+    });
+    // ... then on accept:
+    gtag('consent','update',{ analytics_storage: 'granted', ad_storage: 'granted', ... });
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION D — PLACEHOLDER: Google Ads (_gcl_aw conditional cookie)
+  ══════════════════════════════════════════════════════════════════════════
+  Status: Pending — need a Google Ads account AW-XXXXXXXXX.
+  What it does:
+    • Add gtag('config', 'AW-XXXXXXXXX') here or as a GTM Google Ads tag.
+    • _gcl_au is already set by the GTM Conversion Linker (Tag 9).
+    • _gcl_aw is set ONLY when the visitor arrives via a gclid= URL param
+      (i.e., clicked a Google paid search / display ad).
+  To simulate _gcl_aw right now:
+    Append ?gclid=test123 to this page URL in the browser.
+    The Conversion Linker tag will then write _gcl_aw=GCL.timestamp.test123.
+  Cookies that will appear once Google Ads is connected:
+    _gcl_au    Marketing  Conversion linker (already live via GTM Tag 9)  90 days
+    _gcl_aw    Marketing  Click ID — only on gclid= landing             90 days
+  ══════════════════════════════════════════════════════════════════════════
+
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION E — PLACEHOLDER: Google Ad Manager / AdSense (third-party cookies)
+  ══════════════════════════════════════════════════════════════════════════
+  Status: Pending — AdSense account under review.
+  What it does:
+    • Embed a GPT (Google Publisher Tag) ad slot after AdSense/GAM approval.
+    • Ad slot loads doubleclick.net resources which set third-party cookies.
+  Third-party cookies expected (browser-dependent, blocked by Safari/Firefox):
+    IDE           Marketing  DoubleClick/DV360 cross-site visitor ID     1 year
+    DSID          Marketing  DoubleClick signed-in user ID               2 weeks
+    _gcl_aw       Marketing  Google Ads click ID (gclid landing)        90 days
+    AEC, NID, APISID etc. — Google account / security cookies from google.com
+  GPT snippet to add when ready:
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+      window.googletag = window.googletag || {cmd: []};
+      googletag.cmd.push(function() {
+        googletag.defineSlot('/YOUR_NETWORK_CODE/TEST', [300,250], 'ad-slot-1')
+                 .addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+        googletag.display('ad-slot-1');
+      });
+    </script>
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+
+</head>
+<body>
+  <!-- GTM noscript fallback (Section A) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8M7CRQR"
+            height="0" width="0"
+            style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <h1>Google Cookies — All-in-One Test Page</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="gtm-page.html">GTM Page</a>
+    <a href="spa-page.html">SPA Page</a>
+    <a href="iframe-page.html">Iframe Page</a>
+    <a href="google-cookies.html">Google Cookies</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </nav>
+
+  <div class="warning">
+    <strong>&#9888; All Google tags load freely on this page — no consent banner.</strong>
+    This page is a single-pane debugging surface for every Google cookie.
+    Open DevTools → Application → Cookies to see them land in real time.
+  </div>
+
+  <!-- ── Cookie Coverage Table ───────────────────────────────────────── -->
+  <h2>Cookie Coverage — What This Page Loads</h2>
+  <table id="coverage-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Tag / Mechanism</th>
+        <th>Cookie(s) Set</th>
+        <th>Category</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — GTM</td>
+        <td>GTM container GTM-N8M7CRQR → Tag 1 (GA4 Stream 1)</td>
+        <td><code>_ga</code>, <code>_ga_89RWJTCPLZ</code></td>
+        <td>Analytics</td>
+        <td class="live">Live</td>
+      </tr>
+      <tr>
+        <td>A — GTM</td>
+        <td>GTM container → Tag 9 (Conversion Linker)</td>
+        <td><code>_gcl_au</code>, <code>gtm-session-start</code></td>
+        <td>Marketing / Functional</td>
+        <td class="live">Live</td>
+      </tr>
+      <tr>
+        <td>A — GTM</td>
+        <td>GTM container → Tag 8 (Meta Pixel via GTM)</td>
+        <td><code>_fbp</code></td>
+        <td>Marketing</td>
+        <td class="live">Live</td>
+      </tr>
+      <tr>
+        <td>B — GA4 Stream 2</td>
+        <td>Direct gtag.js tag (G-01XNDLZCYQ)</td>
+        <td><code>_ga_01XNDLZCYQ</code></td>
+        <td>Analytics</td>
+        <td class="live">Live</td>
+      </tr>
+      <tr>
+        <td>D — Google Ads</td>
+        <td>Google Ads conversion tag (AW-XXXXXXXXX)</td>
+        <td><code>_gcl_aw</code></td>
+        <td>Marketing</td>
+        <td class="pending">Pending — need AW- ID (add ?gclid=test to URL to simulate)</td>
+      </tr>
+      <tr>
+        <td>E — GAM / AdSense</td>
+        <td>GPT ad slot (doubleclick.net)</td>
+        <td><code>IDE</code>, <code>DSID</code>, <code>AEC</code>, <code>NID</code> …</td>
+        <td>Marketing</td>
+        <td class="pending">Pending — AdSense account under review</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Live Cookie Reader ──────────────────────────────────────────── -->
+  <h2>Live Cookie Reader</h2>
+  <p>
+    Refreshes every 3 seconds. Shows every cookie the browser has for this
+    origin right now — not just Google cookies. Useful for verifying which
+    cookies land and when.
+  </p>
+  <button onclick="refreshCookies()">Refresh now</button>
+  <button onclick="clearDisplay()">Clear</button>
+  <p id="cookie-ts" style="font-size:13px;color:#7f8c8d;margin-top:4px;"></p>
+  <table id="cookie-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Cookie Name</th>
+        <th>Value (truncated)</th>
+        <th>Category</th>
+        <th>Set By</th>
+      </tr>
+    </thead>
+    <tbody id="cookie-tbody">
+      <tr><td colspan="5" style="text-align:center;color:#888;">Loading…</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── dataLayer Inspector ─────────────────────────────────────────── -->
+  <h2>dataLayer Inspector</h2>
+  <p>
+    Shows every object pushed to <code>window.dataLayer</code> since page
+    load. Useful for confirming GTM tag firing and consent events.
+  </p>
+  <button onclick="refreshDataLayer()">Refresh dataLayer</button>
+  <pre id="datalayer-output" style="background:#f4f4f4;padding:12px;overflow:auto;max-height:300px;font-size:12px;">Click "Refresh dataLayer" to inspect.</pre>
+
+  <!-- ── Debug Helpers ───────────────────────────────────────────────── -->
+  <h2>Debug Helpers</h2>
+  <ul>
+    <li>
+      <strong>Simulate ad click (_gcl_aw):</strong>
+      <button onclick="simulateGclid()">Reload with ?gclid=test123</button>
+      — appends <code>?gclid=test123</code> to the URL; GTM Conversion Linker
+      will write <code>_gcl_aw</code> on the next load.
+    </li>
+    <li>
+      <strong>Clear URL params:</strong>
+      <button onclick="clearParams()">Remove ?gclid from URL</button>
+    </li>
+    <li>
+      <strong>GTM debug mode:</strong> open
+      <code>https://tagassistant.google.com/</code> and connect to this page
+      to see which GTM tags fire and why.
+    </li>
+    <li>
+      <strong>Consent Mode check:</strong> run <code>google_tag_data.ics.entries</code>
+      in the browser console to read the live consent state sent to Google.
+    </li>
+  </ul>
+
+  <!-- ── How Consent Mode Affects These Cookies (reference) ─────────── -->
+  <h2>Google Consent Mode v2 — How It Gates These Cookies</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Consent Signal</th>
+        <th>Cookies Gated</th>
+        <th>Behaviour When Denied</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>analytics_storage</code></td>
+        <td><code>_ga</code>, <code>_ga_&lt;ID&gt;</code></td>
+        <td>GA4 still sends pings but uses cookieless modelling; no client ID stored</td>
+      </tr>
+      <tr>
+        <td><code>ad_storage</code></td>
+        <td><code>_gcl_au</code>, <code>_gcl_aw</code></td>
+        <td>Conversion linker and click ID cookies not written; conversions modelled</td>
+      </tr>
+      <tr>
+        <td><code>ad_user_data</code></td>
+        <td>(no cookie; signal only)</td>
+        <td>User data not sent to Google Ads for audience building</td>
+      </tr>
+      <tr>
+        <td><code>ad_personalization</code></td>
+        <td>(no cookie; signal only)</td>
+        <td>Remarketing and personalised ads disabled</td>
+      </tr>
+      <tr>
+        <td><code>functionality_storage</code></td>
+        <td>Site functional cookies (not Google-set)</td>
+        <td>Not applicable to Google scripts</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;">
+    <strong>Note:</strong> <code>gtm-session-start</code> is a first-party
+    GTM cookie — it is <em>not</em> gated by consent signals and fires
+    whenever the GTM Conversion Linker tag runs.
+  </p>
+
+  <footer>
+    Cookie Consent Test Site — Developer testing environment only.<br>
+    Google Cookies page · Tags: GTM-N8M7CRQR · GA4 G-89RWJTCPLZ · GA4 G-01XNDLZCYQ
+  </footer>
+
+  <script src="assets/test-helpers.js"></script>
+
+  <script>
+    // ── Cookie category map ─────────────────────────────────────────────
+    // Maps cookie name prefixes/exact names to { category, setBy }.
+    var COOKIE_META = {
+      '_ga_89RWJTCPLZ': { cat: 'Analytics',   by: 'GA4 Stream 1 (GTM Tag 1)' },
+      '_ga_01XNDLZCYQ': { cat: 'Analytics',   by: 'GA4 Stream 2 (direct gtag)' },
+      '_ga':            { cat: 'Analytics',   by: 'GA4 (shared across streams)' },
+      '_gid':           { cat: 'Analytics',   by: 'GA4 (legacy, rarely set)' },
+      '_gcl_au':        { cat: 'Marketing',   by: 'GTM Conversion Linker (Tag 9)' },
+      '_gcl_aw':        { cat: 'Marketing',   by: 'Google Ads click ID (gclid= param)' },
+      'gtm-session-start': { cat: 'Functional', by: 'GTM Conversion Linker (Tag 9)' },
+      '_fbp':           { cat: 'Marketing',   by: 'Meta Pixel (GTM Tag 8)' },
+      '_fbc':           { cat: 'Marketing',   by: 'Meta Pixel (fbclid= param only)' },
+      '_uetsid':        { cat: 'Marketing',   by: 'Bing Ads UET (bat.js)' },
+      '_uetvid':        { cat: 'Marketing',   by: 'Bing Ads UET (bat.js)' },
+      'MUID':           { cat: 'Marketing',   by: 'Microsoft (via bat.js)' },
+      'user_prefs':     { cat: 'Functional',  by: 'Inline script (dummy)' },
+      'session_id':     { cat: 'Functional',  by: 'Inline script (dummy)' },
+      'marketing_id':   { cat: 'Others',      by: 'Inline script (dummy)' },
+    };
+
+    function getCookieMeta(name) {
+      if (COOKIE_META[name]) return COOKIE_META[name];
+      if (name.startsWith('_ga_'))  return { cat: 'Analytics',  by: 'GA4 stream companion' };
+      if (name.startsWith('_gcl_')) return { cat: 'Marketing',  by: 'Google Ads / Conversion Linker' };
+      return { cat: '—', by: '—' };
+    }
+
+    function refreshCookies() {
+      var raw = document.cookie.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
+      var tbody = document.getElementById('cookie-tbody');
+      if (raw.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">No cookies found for this origin.</td></tr>';
+      } else {
+        tbody.innerHTML = raw.map(function(c, i) {
+          var idx = c.indexOf('=');
+          var name = idx > -1 ? c.substring(0, idx) : c;
+          var val  = idx > -1 ? c.substring(idx + 1) : '';
+          var m    = getCookieMeta(name);
+          var shortVal = val.length > 40 ? val.substring(0, 40) + '…' : val;
+          return '<tr><td>' + (i+1) + '</td><td><code>' + name + '</code></td><td style="font-size:12px;word-break:break-all;">' + shortVal + '</td><td>' + m.cat + '</td><td style="font-size:12px;">' + m.by + '</td></tr>';
+        }).join('');
+      }
+      document.getElementById('cookie-ts').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString();
+    }
+
+    function clearDisplay() {
+      document.getElementById('cookie-tbody').innerHTML =
+        '<tr><td colspan="5" style="text-align:center;color:#888;">Cleared. Click "Refresh now" to reload.</td></tr>';
+    }
+
+    function refreshDataLayer() {
+      var dl = window.dataLayer || [];
+      document.getElementById('datalayer-output').textContent =
+        JSON.stringify(dl, null, 2);
+    }
+
+    function simulateGclid() {
+      var url = window.location.href.split('?')[0] + '?gclid=test123';
+      window.location.href = url;
+    }
+
+    function clearParams() {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    // Auto-refresh every 3 seconds
+    refreshCookies();
+    setInterval(refreshCookies, 3000);
+  </script>
+
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #eaf2fb; }
+    tr:nth-child(even) td { background: #fafafa; }
+    .live    { color: #1a7a2e; font-weight: bold; }
+    .pending { color: #8a6d00; }
+    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+    button { margin: 4px 6px 4px 0; padding: 6px 12px; cursor: pointer;
+             background: #2e86c1; color: #fff; border: none; border-radius: 4px; font-size: 13px; }
+    button:hover { background: #1b6fa8; }
+    #coverage-table .live    { background: #eaffea; }
+    #coverage-table .pending { background: #fff8e1; }
+  </style>
+</body>
+</html>
