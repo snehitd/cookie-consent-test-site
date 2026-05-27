@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Site — Google Cookies</title>
+  <meta name="google-adsense-account" content="ca-pub-7344776715655315">
   <link rel="stylesheet" href="assets/style.css">
 
   <!--
@@ -118,42 +119,27 @@
 
   <!--
   ══════════════════════════════════════════════════════════════════════════
-  SECTION E — Google Ad Manager / AdSense (third-party cookies)
+  SECTION E — Google AdSense Auto-Ads (Publisher: ca-pub-7344776715655315)
   ══════════════════════════════════════════════════════════════════════════
-  Status: Pending — AdSense account under review.
-
-  WHY THESE CANNOT BE FAKED WITH document.cookie:
-    IDE, DSID, AEC, NID etc. are set by doubleclick.net and google.com
-    domains — not by our domain. document.cookie only writes first-party
-    cookies scoped to our origin. To get these cookies a real GPT ad slot
-    must load gpt.js, which then fetches ads from doubleclick.net, and
-    THAT response sets the cookies on the doubleclick.net domain.
-    Modern browsers (Safari/Firefox ITP) may also block them entirely.
-
-  What to do once AdSense is approved:
-    1. Get your GAM Network Code from admanager.google.com (format: /12345678/)
-    2. Create an ad unit (e.g., 300x250)
-    3. Replace the placeholder below with the real GPT snippet:
-
-  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
-  <script>
-    window.googletag = window.googletag || {cmd: []};
-    googletag.cmd.push(function() {
-      googletag.defineSlot('/YOUR_NETWORK_CODE/TEST', [300,250], 'ad-slot-1')
-               .addService(googletag.pubads());
-      googletag.pubads().enableSingleRequest();
-      googletag.enableServices();
-      googletag.display('ad-slot-1');
-    });
-  </script>
-  <div id="ad-slot-1"></div>
-
-  Third-party cookies expected after GPT loads (Chrome only — Safari/Firefox block):
+  What it does:
+    • Loads adsbygoogle.js — Google's AdSense auto-ads script.
+    • Google automatically selects ad placement and size on the page.
+    • When an ad loads, the browser makes requests to doubleclick.net
+      which SET third-party cookies on that domain (not our domain).
+  WHY THESE COOKIES CANNOT BE FAKED WITH document.cookie:
+    IDE, DSID, AEC, NID etc. are written by doubleclick.net servers in
+    Set-Cookie response headers — only that domain can write them.
+    document.cookie can only write first-party cookies for our origin.
+    Safari / Firefox (ITP/ETP) will also block them as third-party.
+  Third-party cookies expected once ads serve (Chrome, ad-blocker off):
     IDE      Marketing  DoubleClick cross-site visitor ID   1 year
     DSID     Marketing  DoubleClick signed-in user ID       2 weeks
-    AEC, NID, APISID — Google account / security (google.com domain)
+    AEC, NID — Google account / anti-abuse (google.com domain)
   ══════════════════════════════════════════════════════════════════════════
   -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7344776715655315"
+     crossorigin="anonymous"></script>
+  <!-- End Section E -->
 
 </head>
 <body>
@@ -227,11 +213,11 @@
         <td class="dummy">Dummy — correct format, fabricated gclid value. Use "Reload with ?gclid=test123" for real GTM-written value.</td>
       </tr>
       <tr>
-        <td>E — GAM / AdSense</td>
-        <td>GPT ad slot — <em>pending AdSense approval</em></td>
+        <td>E — AdSense Auto-Ads</td>
+        <td>AdSense auto-ads (<code>adsbygoogle.js</code>, publisher <code>ca-pub-7344776715655315</code>)</td>
         <td><code>IDE</code>, <code>DSID</code>, <code>AEC</code>, <code>NID</code> …</td>
-        <td>Marketing</td>
-        <td class="pending">Cannot fake — these are third-party cookies set by doubleclick.net domain only. Pending AdSense account approval.</td>
+        <td>Marketing (third-party, doubleclick.net)</td>
+        <td class="live">Live — script loaded. Cookies appear in Chrome (no ad-blocker) once ads serve. Cannot be faked — set by doubleclick.net, not our domain. Blocked by Safari/Firefox ITP.</td>
       </tr>
     </tbody>
   </table>
@@ -363,6 +349,8 @@
       '_uetsid':        { cat: 'Marketing',   by: 'Bing Ads UET (bat.js)' },
       '_uetvid':        { cat: 'Marketing',   by: 'Bing Ads UET (bat.js)' },
       'MUID':           { cat: 'Marketing',   by: 'Microsoft (via bat.js)' },
+      'IDE':            { cat: 'Marketing',   by: 'Google AdSense / DoubleClick (third-party, doubleclick.net)' },
+      'DSID':           { cat: 'Marketing',   by: 'Google AdSense / DoubleClick (third-party, doubleclick.net)' },
       'user_prefs':     { cat: 'Functional',  by: 'Inline script (dummy)' },
       'session_id':     { cat: 'Functional',  by: 'Inline script (dummy)' },
       'marketing_id':   { cat: 'Others',      by: 'Inline script (dummy)' },
