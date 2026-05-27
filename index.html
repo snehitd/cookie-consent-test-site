@@ -12,21 +12,6 @@
     document.cookie = 'session_id=sess-abc123xyz; path=/; max-age=1800';
     console.log('Functional cookies set: user_prefs, session_id');
   </script>
-  <!-- Meta Pixel (Pixel ID: 1995676894381395) — sets _fbp on load, _fbc if fbclid param present -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1995676894381395');
-    fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1995676894381395&ev=PageView&noscript=1"/></noscript>
   <!-- Bing Ads UET (Tag ID: 343251198) — sets _uetsid, _uetvid, MUID on load -->
   <script>
     (function(w, d, t, u, o) {
@@ -56,18 +41,21 @@
     <a href="spa-page.html">SPA Page</a>
     <a href="iframe-page.html">Iframe Page</a>
     <a href="google-cookies.html">Google Cookies</a>
+    <a href="meta-cookies.html">Meta Cookies</a>
   </nav>
   <div class="warning">
     <strong>&#9888; No banner, no enforcement.</strong>
     No consent banner is shown and tracking scripts load freely.
   </div>
   <h2>What loads on this page</h2>
-  <p style="font-size:13px;color:#555;">Google cookies are on the <a href="google-cookies.html">Google Cookies</a> page. This page covers Meta, Bing, and site functional cookies.</p>
+  <p style="font-size:13px;color:#555;">
+    Dedicated cookie pages: <a href="google-cookies.html">Google Cookies</a> ·
+    <a href="meta-cookies.html">Meta Cookies</a>.
+    This page loads Bing UET and site functional cookies only.
+  </p>
   <ul>
     <li><strong>[Functional]</strong> <code>user_prefs</code> — stores language &amp; theme preference (1 day) — <em>dummy</em></li>
     <li><strong>[Functional]</strong> <code>session_id</code> — maintains session state (30 min) — <em>dummy</em></li>
-    <li><strong>[Marketing]</strong> <code>_fbp</code> — Meta Pixel browser ID (90 days) — <em>real</em></li>
-    <li><strong>[Marketing]</strong> <code>_fbc</code> — Meta Pixel click ID (90 days) — <em>real, only on fbclid= landing</em></li>
     <li><strong>[Marketing]</strong> <code>_uetsid</code> — Bing Ads UET session ID (30 min) — <em>real</em></li>
     <li><strong>[Marketing]</strong> <code>_uetvid</code> — Bing Ads UET visitor ID (180 days) — <em>real</em></li>
     <li><strong>[Marketing]</strong> <code>MUID</code> — Microsoft User ID (1 year) — <em>real</em></li>

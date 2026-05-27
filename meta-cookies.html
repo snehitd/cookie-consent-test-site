@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Site — Meta Cookies</title>
+  <meta name="google-adsense-account" content="ca-pub-7344776715655315">
+  <link rel="stylesheet" href="assets/style.css">
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION A — Meta Pixel (Pixel ID: 1995676894381395)   [REAL]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Loads fbevents.js from connect.facebook.net — Meta's tracking library.
+    • On load automatically fires a PageView event to Meta's servers.
+    • Writes _fbp (browser fingerprint) as a first-party cookie immediately.
+    • Reads the fbclid= URL param; if present, also writes _fbc (click ID).
+    • Sends anonymised event data to Meta for ad attribution, retargeting
+      audience building, and conversion optimisation.
+  Pixel ID: 1995676894381395
+  Cookies produced (first-party, our domain):
+    _fbp    Marketing   Browser fingerprint for retargeting     90 days
+    _fbc    Marketing   Ad click ID from fbclid= URL param      90 days  (conditional)
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1995676894381395');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1995676894381395&ev=PageView&noscript=1"/></noscript>
+  <!-- End Section A -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION B — Meta Conversions API (CAPI) Matching Cookies   [DUMMY]
+  ══════════════════════════════════════════════════════════════════════════
+  What they are:
+    • th_capi_* cookies store SHA-256 hashed PII so Meta can match browser
+      Pixel events with server-side Conversions API events.
+    • Better match quality = more accurate attribution, especially when
+      the Pixel is blocked by an ad-blocker or browser ITP.
+    • In production these are written SERVER-SIDE (not by any browser
+      script) — typically after a user submits a form, logs in, or purchases.
+      Your backend hashes the data and calls Meta's CAPI, then optionally
+      mirrors the hashed values into these first-party cookies.
+  Why dummy here:
+    • CAPI has no browser-side JS — there is no script to embed.
+    • We simulate the cookies so they appear in DevTools for testing
+      consent enforcement mapping and cookie category assignment.
+  Format: 64-character lowercase hexadecimal (SHA-256)
+  Cookies (Marketing / First-party):
+    th_capi_em   Hashed email address      24 hours
+    th_capi_fn   Hashed first name         24 hours
+    th_capi_ln   Hashed last name          24 hours
+    th_capi_ph   Hashed phone number       24 hours
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+    // Dummy SHA-256 hashes — format is correct (64 hex chars), values are fabricated
+    document.cookie = 'th_capi_em=973dfe0d4f3d5d0a4fbd14e44ea0d5fa0c5dc07a8d0f3c0e7e3a8c1f2b3c4d5e; path=/; max-age=86400';
+    document.cookie = 'th_capi_fn=b3a8c1f2d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2; path=/; max-age=86400';
+    document.cookie = 'th_capi_ln=c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5; path=/; max-age=86400';
+    document.cookie = 'th_capi_ph=d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6; path=/; max-age=86400';
+    console.log('Marketing cookies set: th_capi_em, th_capi_fn, th_capi_ln, th_capi_ph (CAPI matching — DUMMY)');
+  </script>
+  <!-- End Section B -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION C — Facebook Social Plugin iframe   [REAL, THIRD-PARTY]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Embeds an iframe that loads directly from facebook.com.
+    • When the iframe loads, Facebook's servers write cookies on the
+      FACEBOOK.COM domain via Set-Cookie response headers.
+    • These are third-party cookies from our site's perspective — they
+      appear under facebook.com in DevTools → Application → Cookies,
+      NOT under our domain.
+  WHY THESE CANNOT BE FAKED WITH document.cookie:
+    • document.cookie can only write first-party cookies on our origin.
+    • fr, datr, sb etc. are written by facebook.com's servers only.
+    • No amount of inline scripting can replicate them as first-party cookies.
+  Cookies produced (appear under facebook.com in DevTools):
+    fr       Marketing   Ad delivery & cross-site retargeting         90 days
+    datr     Marketing   Browser ID for fraud prevention              2 years
+    sb       Marketing   Browser identification                       2 years
+    locale   Functional  Language preference                          7 days
+    dpr      Functional  Device pixel ratio for image optimisation    7 days
+    wd       Functional  Browser window dimensions                    7 days
+    xs       Marketing   Session auth token — only if logged into FB  session
+    c_user   Marketing   Facebook user ID  — only if logged into FB   session
+    presence Functional  Chat presence state — only if logged in      session
+  Browser note: Chrome (no ad-blocker) will set all of the above.
+  Safari and Firefox block them by default under ITP / ETP.
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+
+</head>
+<body>
+
+  <h1>Meta Cookies — All-in-One Test Page</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="spa-page.html">SPA Page</a>
+    <a href="iframe-page.html">Iframe Page</a>
+    <a href="google-cookies.html">Google Cookies</a>
+    <a href="meta-cookies.html">Meta Cookies</a>
+  </nav>
+
+  <div class="warning">
+    <strong>&#9888; All Meta tags load freely on this page — no consent banner.</strong>
+    Single-pane debugging surface for every Meta / Facebook cookie.
+    Open DevTools → Application → Cookies to observe them in real time.
+  </div>
+
+  <!-- ── About Meta Pixel & Facebook Advertising ──────────────────────── -->
+  <h2>About Meta Pixel &amp; Facebook Advertising Cookies</h2>
+
+  <p>
+    <strong>Meta Pixel</strong> (formerly Facebook Pixel) is a JavaScript
+    snippet — <code>fbevents.js</code> loaded from
+    <code>connect.facebook.net</code> — that tracks user behaviour on your
+    website and reports events (page views, add-to-cart, purchases, sign-ups,
+    etc.) to Meta's advertising platform. This data powers ad attribution,
+    custom audience creation, and conversion optimisation for Facebook and
+    Instagram campaigns.
+  </p>
+  <p>
+    <strong>Facebook Ads</strong> uses Pixel data to measure which ads drove
+    actions on your site, build lookalike audiences from converters, and enable
+    dynamic product ads (showing users the exact products they viewed). Without
+    the Pixel, advertisers lose visibility into post-click behaviour and
+    cannot optimise bids for conversions.
+  </p>
+  <p>
+    <strong>Meta Conversions API (CAPI)</strong> is a server-to-server
+    integration that sends event data directly from your backend to Meta,
+    bypassing browser ad-blockers and ITP. It complements the Pixel by
+    filling attribution gaps when the browser Pixel is blocked. CAPI events
+    are matched to Meta users using hashed PII (email, phone, name).
+  </p>
+
+  <h3>Four ways Meta cookies get set on a website</h3>
+  <ol>
+    <li>
+      <strong>Meta Pixel — <code>fbevents.js</code> (first-party):</strong>
+      The Pixel script writes <code>_fbp</code> as a first-party cookie on your
+      domain on every page load. If the visitor arrived via a Meta ad
+      (URL contains <code>fbclid=</code>), the Pixel also writes <code>_fbc</code>.
+    </li>
+    <li>
+      <strong>Meta Conversions API — CAPI (first-party, server-side):</strong>
+      After a conversion event (form submit, purchase, login), your server sends
+      hashed PII to Meta's API. It simultaneously writes <code>th_capi_em</code>,
+      <code>th_capi_fn</code>, <code>th_capi_ln</code>, <code>th_capi_ph</code>
+      as first-party cookies. There is no browser script — this is purely
+      server-side. On this test page these four cookies are simulated as dummies.
+    </li>
+    <li>
+      <strong>Facebook Social Plugins (third-party via iframe):</strong>
+      Embedding a Like button, Comments widget, or Share button loads an iframe
+      from <code>facebook.com</code>. Facebook's servers set cookies like
+      <code>fr</code>, <code>datr</code>, <code>sb</code>, <code>locale</code>,
+      <code>dpr</code>, <code>wd</code> directly on the <code>facebook.com</code>
+      domain. These are third-party cookies from your site's perspective and
+      appear under <code>facebook.com</code> in DevTools, not your domain.
+    </li>
+    <li>
+      <strong>Facebook Login &amp; authenticated sessions (third-party):</strong>
+      When a user logs into Facebook (or uses "Login with Facebook"), Meta sets
+      <code>xs</code> (session authentication token) and <code>c_user</code>
+      (Facebook user ID) on the <code>facebook.com</code> domain. These are
+      only present when the browser has an active Facebook session.
+    </li>
+  </ol>
+
+  <!-- ── Complete Cookie Reference Table ──────────────────────────────── -->
+  <h2>Complete Meta Cookie Reference</h2>
+  <table id="ref-table">
+    <thead>
+      <tr>
+        <th>Cookie</th>
+        <th>Category</th>
+        <th>Purpose</th>
+        <th>Type</th>
+        <th>Set By / Trigger</th>
+        <th>Expiry</th>
+        <th>Status on This Page</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>_fbp</code></td>
+        <td>Marketing</td>
+        <td>Facebook Pixel browser fingerprint for retargeting &amp; audience building</td>
+        <td>First-party</td>
+        <td>Meta Pixel (<code>fbevents.js</code>) — page load</td>
+        <td>90 days</td>
+        <td class="real">Real — Section A</td>
+      </tr>
+      <tr>
+        <td><code>_fbc</code></td>
+        <td>Marketing</td>
+        <td>Stores the Facebook click ID (<code>fbclid</code>) from the landing URL for attribution</td>
+        <td>First-party</td>
+        <td>Meta Pixel — only set when URL contains <code>fbclid=</code> param</td>
+        <td>90 days</td>
+        <td class="conditional">Real — conditional (use "Simulate ad click" button)</td>
+      </tr>
+      <tr>
+        <td><code>fr</code></td>
+        <td>Marketing</td>
+        <td>Primary advertising cookie — ad delivery &amp; cross-site retargeting</td>
+        <td>Third-party</td>
+        <td>Facebook Social Plugin iframe (Section C) / Pixel requests to facebook.com</td>
+        <td>90 days</td>
+        <td class="real">Real — Chrome only, appears under facebook.com in DevTools</td>
+      </tr>
+      <tr>
+        <td><code>xs</code></td>
+        <td>Marketing</td>
+        <td>Facebook session authentication token</td>
+        <td>Third-party</td>
+        <td>facebook.com — only when user is actively logged into Facebook</td>
+        <td>Session / 90 days</td>
+        <td class="conditional">Real — only if logged into Facebook</td>
+      </tr>
+      <tr>
+        <td><code>sb</code></td>
+        <td>Marketing</td>
+        <td>Browser identification for security &amp; fraud prevention</td>
+        <td>Third-party</td>
+        <td>Facebook Social Plugin iframe</td>
+        <td>2 years</td>
+        <td class="real">Real — Chrome only, appears under facebook.com</td>
+      </tr>
+      <tr>
+        <td><code>ps_l</code></td>
+        <td>Marketing</td>
+        <td>Ad measurement — tracks ad impressions for frequency capping</td>
+        <td>Third-party</td>
+        <td>facebook.com — only when Facebook ads are actively served on the page</td>
+        <td>Session</td>
+        <td class="scenario">Appears only when Facebook ads are serving</td>
+      </tr>
+      <tr>
+        <td><code>ps_n</code></td>
+        <td>Marketing</td>
+        <td>Ad measurement — companion to ps_l</td>
+        <td>Third-party</td>
+        <td>facebook.com — only when Facebook ads are actively served on the page</td>
+        <td>Session</td>
+        <td class="scenario">Appears only when Facebook ads are serving</td>
+      </tr>
+      <tr>
+        <td><code>ar_debug</code></td>
+        <td>Marketing</td>
+        <td>Ad debugging — enables Pixel debug mode in Meta Events Manager</td>
+        <td>Third-party</td>
+        <td>facebook.com — only when Meta Pixel Helper Chrome extension is active</td>
+        <td>Session</td>
+        <td class="scenario">Install Meta Pixel Helper Chrome extension to trigger</td>
+      </tr>
+      <tr>
+        <td><code>c_user</code></td>
+        <td>Marketing</td>
+        <td>Stores the logged-in Facebook user ID for session continuity</td>
+        <td>Third-party</td>
+        <td>facebook.com — only when user is actively logged into Facebook</td>
+        <td>Session / 90 days</td>
+        <td class="conditional">Real — only if logged into Facebook</td>
+      </tr>
+      <tr>
+        <td><code>datr</code></td>
+        <td>Marketing</td>
+        <td>Browser-level identifier for fraud prevention &amp; security</td>
+        <td>Third-party</td>
+        <td>Facebook Social Plugin iframe</td>
+        <td>2 years</td>
+        <td class="real">Real — Chrome only, appears under facebook.com</td>
+      </tr>
+      <tr>
+        <td><code>th_capi_em</code></td>
+        <td>Marketing</td>
+        <td>SHA-256 hashed email address for CAPI event identity matching</td>
+        <td>First-party</td>
+        <td>Server-side Conversions API — written by your backend after a conversion</td>
+        <td>24 hours</td>
+        <td class="dummy">Dummy — CAPI is server-side; hash value is fabricated</td>
+      </tr>
+      <tr>
+        <td><code>th_capi_fn</code></td>
+        <td>Marketing</td>
+        <td>SHA-256 hashed first name for CAPI matching</td>
+        <td>First-party</td>
+        <td>Server-side Conversions API</td>
+        <td>24 hours</td>
+        <td class="dummy">Dummy — fabricated hash</td>
+      </tr>
+      <tr>
+        <td><code>th_capi_ln</code></td>
+        <td>Marketing</td>
+        <td>SHA-256 hashed last name for CAPI matching</td>
+        <td>First-party</td>
+        <td>Server-side Conversions API</td>
+        <td>24 hours</td>
+        <td class="dummy">Dummy — fabricated hash</td>
+      </tr>
+      <tr>
+        <td><code>th_capi_ph</code></td>
+        <td>Marketing</td>
+        <td>SHA-256 hashed phone number for CAPI matching</td>
+        <td>First-party</td>
+        <td>Server-side Conversions API</td>
+        <td>24 hours</td>
+        <td class="dummy">Dummy — fabricated hash</td>
+      </tr>
+      <tr>
+        <td><code>locale</code></td>
+        <td>Functional</td>
+        <td>Stores user language preference for Facebook UI localisation</td>
+        <td>Third-party</td>
+        <td>Facebook Social Plugin iframe</td>
+        <td>7 days</td>
+        <td class="real">Real — Chrome only, appears under facebook.com</td>
+      </tr>
+      <tr>
+        <td><code>dpr</code></td>
+        <td>Functional</td>
+        <td>Device pixel ratio — used to serve appropriately sized images</td>
+        <td>Third-party</td>
+        <td>Facebook Social Plugin iframe</td>
+        <td>7 days</td>
+        <td class="real">Real — Chrome only, appears under facebook.com</td>
+      </tr>
+      <tr>
+        <td><code>wd</code></td>
+        <td>Functional</td>
+        <td>Browser window width &amp; height for layout optimisation</td>
+        <td>Third-party</td>
+        <td>Facebook Social Plugin iframe</td>
+        <td>7 days</td>
+        <td class="real">Real — Chrome only, appears under facebook.com</td>
+      </tr>
+      <tr>
+        <td><code>presence</code></td>
+        <td>Functional</td>
+        <td>Facebook Messenger chat presence state (online / away / offline)</td>
+        <td>Third-party</td>
+        <td>facebook.com — only when user is logged in with Messenger active</td>
+        <td>Session</td>
+        <td class="conditional">Real — only if logged into Facebook with chat open</td>
+      </tr>
+      <tr>
+        <td><code>cppo</code></td>
+        <td>Functional</td>
+        <td>Cookie preference control — stores whether user has managed Facebook cookie settings</td>
+        <td>Third-party</td>
+        <td>facebook.com — set when user interacts with Facebook's own cookie preference UI</td>
+        <td>Varies</td>
+        <td class="scenario">Only in Facebook's own cookie preference flow</td>
+      </tr>
+      <tr>
+        <td><code>rd_challenge</code></td>
+        <td>Functional</td>
+        <td>Security challenge validation token — used in account recovery / suspicious login flows</td>
+        <td>Third-party</td>
+        <td>facebook.com — security verification scenarios only</td>
+        <td>Session</td>
+        <td class="scenario">Only in Facebook security challenge flows</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Coverage Summary ──────────────────────────────────────────────── -->
+  <h2>Cookie Coverage — What This Page Loads</h2>
+  <table id="coverage-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Mechanism</th>
+        <th>Cookie(s) Set</th>
+        <th>Category</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — Meta Pixel</td>
+        <td>Direct <code>fbevents.js</code> (Pixel ID: 1995676894381395)</td>
+        <td><code>_fbp</code>, <code>_fbc</code></td>
+        <td>Marketing · First-party</td>
+        <td class="real">Real — <code>_fbc</code> conditional on <code>fbclid=</code> URL param</td>
+      </tr>
+      <tr>
+        <td>B — CAPI</td>
+        <td>Inline <code>document.cookie</code></td>
+        <td><code>th_capi_em</code>, <code>th_capi_fn</code>, <code>th_capi_ln</code>, <code>th_capi_ph</code></td>
+        <td>Marketing · First-party</td>
+        <td class="dummy">Dummy — CAPI is server-side; SHA-256 hashes are fabricated</td>
+      </tr>
+      <tr>
+        <td>C — Social Plugin</td>
+        <td>Facebook Like button iframe from <code>facebook.com</code></td>
+        <td><code>fr</code>, <code>datr</code>, <code>sb</code>, <code>locale</code>, <code>dpr</code>, <code>wd</code> + <code>xs</code>/<code>c_user</code> if logged in</td>
+        <td>Marketing / Functional · Third-party (facebook.com)</td>
+        <td class="real">Real — Chrome (no ad-blocker) only; appear under <strong>facebook.com</strong> in DevTools</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Section C: Facebook Social Plugin iframe ──────────────────────── -->
+  <h2>Section C — Facebook Social Plugin (triggers third-party cookies)</h2>
+  <p>
+    The Like button below loads directly from <code>facebook.com</code>. When it
+    renders, Facebook's servers write the third-party cookies listed in Section C
+    above. To see them: DevTools → Application → Cookies → expand
+    <strong>facebook.com</strong> (not this site's domain).
+  </p>
+  <div style="margin:16px 0;padding:16px;background:#f0f4f8;border-radius:4px;border-left:4px solid #3b5998;">
+    <p style="margin:0 0 10px;font-size:13px;color:#555;">Facebook Like button — loads from facebook.com and triggers third-party cookies:</p>
+    <iframe
+      src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2F&width=450&layout=standard&action=like&size=large&share=true&height=35"
+      width="450" height="35"
+      style="border:none;overflow:hidden;display:block;"
+      scrolling="no" frameborder="0" allowfullscreen="true"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+    </iframe>
+  </div>
+  <div class="warning" style="margin-top:8px;">
+    <strong>Browser note:</strong> Chrome (no ad-blocker) sets <code>fr</code>, <code>datr</code>,
+    <code>sb</code>, <code>locale</code>, <code>dpr</code>, <code>wd</code> from this iframe.
+    Safari and Firefox block them by default under ITP / ETP.
+    If you are logged into Facebook, <code>xs</code> and <code>c_user</code> will also appear.
+  </div>
+
+  <!-- ── Debug Helpers ─────────────────────────────────────────────────── -->
+  <h2>Debug Helpers</h2>
+  <ul>
+    <li>
+      <strong>Simulate Meta ad click (<code>_fbc</code>):</strong>
+      <button onclick="simulateFbclid()">Reload with ?fbclid=test-fb-click-123</button>
+      — appends <code>?fbclid=test-fb-click-123</code>; the Pixel will set
+      <code>_fbc=fb.1.&lt;timestamp&gt;.test-fb-click-123</code>.
+    </li>
+    <li>
+      <strong>Clear URL params:</strong>
+      <button onclick="clearParams()">Remove ?fbclid from URL</button>
+    </li>
+    <li>
+      <strong>Check Pixel queue:</strong> run <code>window.fbq.q</code> in the
+      browser console to see all queued Pixel calls and the current consent state.
+    </li>
+    <li>
+      <strong>Meta Pixel Helper:</strong> install the
+      <a href="https://chromewebstore.google.com/detail/meta-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc" target="_blank">Meta Pixel Helper Chrome extension</a>
+      to validate Pixel event firing, inspect sent parameters, and trigger
+      <code>ar_debug</code>.
+    </li>
+    <li>
+      <strong>Trigger ps_l / ps_n:</strong> these only appear when a Facebook
+      ad is actively served on the page. Not reproducible on a test site without
+      a live Facebook Ads campaign targeting this URL.
+    </li>
+  </ul>
+
+  <!-- ── Live First-Party Cookie Reader ───────────────────────────────── -->
+  <h2>Live Cookie Reader (first-party)</h2>
+  <p>
+    Shows first-party cookies set on <em>this domain</em>. Auto-refreshes every
+    3 seconds. Third-party Meta cookies (<code>fr</code>, <code>datr</code>,
+    <code>sb</code> etc.) are set on <code>facebook.com</code> — see them in
+    DevTools → Application → Cookies → <strong>facebook.com</strong>.
+  </p>
+  <button onclick="refreshCookies()">Refresh now</button>
+  <p id="cookie-ts" style="font-size:13px;color:#7f8c8d;margin-top:4px;"></p>
+  <table id="cookie-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Cookie Name</th>
+        <th>Value (truncated)</th>
+        <th>Category</th>
+        <th>Set By</th>
+      </tr>
+    </thead>
+    <tbody id="cookie-tbody">
+      <tr><td colspan="5" style="text-align:center;color:#888;">Loading…</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── Meta Pixel Consent Mode Reference ────────────────────────────── -->
+  <h2>Meta Pixel Consent Mode — Enforcement Reference</h2>
+  <p>
+    Meta Pixel exposes a consent API. On the enforcement branch, consent is
+    <strong>revoked by default</strong> before the Pixel initialises, then
+    granted or kept revoked based on the user's marketing consent choice.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Call</th>
+        <th>When</th>
+        <th>Effect</th>
+        <th>Cookies Gated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>fbq('consent','revoke')</code></td>
+        <td>Before <code>fbq('init',...)</code> — default state</td>
+        <td>Pixel loads but operates in <strong>Limited Data Use (LDU)</strong> mode — no personal data collected, no retargeting audiences built</td>
+        <td><code>_fbp</code>, <code>_fbc</code>, <code>th_capi_*</code></td>
+      </tr>
+      <tr>
+        <td><code>fbq('consent','grant')</code></td>
+        <td>After user accepts marketing consent</td>
+        <td>Full tracking enabled — events, custom audiences, dynamic ads, conversion attribution all active</td>
+        <td>All above unlocked</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;">
+    The Social Plugin iframe (Section C) third-party cookies (<code>fr</code>,
+    <code>datr</code>, <code>sb</code> etc.) are gated by blocking the iframe
+    element entirely until consent — the Pixel consent API does not control them.
+    On the enforcement branch the iframe <code>src</code> is withheld until
+    marketing consent is granted, then injected dynamically.
+  </p>
+
+  <footer>
+    Cookie Consent Test Site — Developer testing environment only.<br>
+    Meta Cookies page · Pixel ID: 1995676894381395
+  </footer>
+
+  <script src="assets/test-helpers.js"></script>
+
+  <script>
+    var COOKIE_META = {
+      '_fbp':         { cat: 'Marketing',  by: 'Meta Pixel — fbevents.js (Section A)' },
+      '_fbc':         { cat: 'Marketing',  by: 'Meta Pixel — fbclid= URL param landing' },
+      'th_capi_em':   { cat: 'Marketing',  by: 'Meta CAPI — hashed email (DUMMY)' },
+      'th_capi_fn':   { cat: 'Marketing',  by: 'Meta CAPI — hashed first name (DUMMY)' },
+      'th_capi_ln':   { cat: 'Marketing',  by: 'Meta CAPI — hashed last name (DUMMY)' },
+      'th_capi_ph':   { cat: 'Marketing',  by: 'Meta CAPI — hashed phone (DUMMY)' },
+      'user_prefs':   { cat: 'Functional', by: 'Inline script (dummy)' },
+      'session_id':   { cat: 'Functional', by: 'Inline script (dummy)' },
+      'marketing_id': { cat: 'Others',     by: 'Inline script (dummy)' },
+      '_uetsid':      { cat: 'Marketing',  by: 'Bing Ads UET' },
+      '_uetvid':      { cat: 'Marketing',  by: 'Bing Ads UET' },
+      'MUID':         { cat: 'Marketing',  by: 'Microsoft (via bat.js)' },
+    };
+
+    function getCookieMeta(name) {
+      if (COOKIE_META[name]) return COOKIE_META[name];
+      if (name.startsWith('_ga'))      return { cat: 'Analytics', by: 'Google Analytics' };
+      if (name.startsWith('_gcl'))     return { cat: 'Marketing', by: 'Google Ads / Conversion Linker' };
+      if (name.startsWith('th_capi_')) return { cat: 'Marketing', by: 'Meta CAPI (DUMMY)' };
+      return { cat: '—', by: '—' };
+    }
+
+    function refreshCookies() {
+      var raw = document.cookie.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
+      var tbody = document.getElementById('cookie-tbody');
+      if (raw.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">No cookies found for this origin.</td></tr>';
+      } else {
+        tbody.innerHTML = raw.map(function(c, i) {
+          var idx = c.indexOf('=');
+          var name = idx > -1 ? c.substring(0, idx) : c;
+          var val  = idx > -1 ? c.substring(idx + 1) : '';
+          var m    = getCookieMeta(name);
+          var shortVal = val.length > 40 ? val.substring(0, 40) + '…' : val;
+          return '<tr><td>' + (i + 1) + '</td>'
+               + '<td><code>' + name + '</code></td>'
+               + '<td style="font-size:12px;word-break:break-all;">' + shortVal + '</td>'
+               + '<td>' + m.cat + '</td>'
+               + '<td style="font-size:12px;">' + m.by + '</td></tr>';
+        }).join('');
+      }
+      document.getElementById('cookie-ts').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString();
+    }
+
+    function simulateFbclid() {
+      var url = window.location.href.split('?')[0] + '?fbclid=test-fb-click-123';
+      window.location.href = url;
+    }
+
+    function clearParams() {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    refreshCookies();
+    setInterval(refreshCookies, 3000);
+  </script>
+
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #eaf2fb; }
+    tr:nth-child(even) td { background: #fafafa; }
+    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+    button { margin: 4px 6px 4px 0; padding: 6px 12px; cursor: pointer;
+             background: #2e86c1; color: #fff; border: none; border-radius: 4px; font-size: 13px; }
+    button:hover { background: #1b6fa8; }
+    a { color: #2e86c1; }
+    /* Status cell colours — used in both #ref-table and #coverage-table */
+    .real        { color: #1a7a2e; font-weight: bold; }
+    .dummy       { color: #7a4f00; }
+    .conditional { color: #1a5276; font-weight: bold; }
+    .scenario    { color: #8a6d00; }
+    #ref-table .real        { background: #eaffea; }
+    #ref-table .dummy       { background: #fdf0e0; }
+    #ref-table .conditional { background: #eaf4fb; }
+    #ref-table .scenario    { background: #fff8e1; }
+    #coverage-table .real   { background: #eaffea; }
+    #coverage-table .dummy  { background: #fdf0e0; }
+  </style>
+</body>
+</html>

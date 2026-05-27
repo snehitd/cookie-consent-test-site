@@ -16,7 +16,7 @@
     • The container fires all PUBLISHED tags automatically on page load:
         Tag 1  — GA4 (Stream 1, G-89RWJTCPLZ)  → sets _ga, _ga_89RWJTCPLZ
         Tag 9  — Conversion Linker              → sets _gcl_au, gtm-session-start
-        Tag 8  — Meta Pixel (via GTM)           → sets _fbp
+        Tag 8  — Meta Pixel (via GTM)           → sets _fbp (documented on Meta Cookies page)
     • No tag runs if it is paused or unpublished in the GTM dashboard.
   Cookies produced (via GTM tags, not this script itself):
     _ga               Analytics   GA4 client ID            2 years
@@ -156,6 +156,7 @@
     <a href="spa-page.html">SPA Page</a>
     <a href="iframe-page.html">Iframe Page</a>
     <a href="google-cookies.html">Google Cookies</a>
+    <a href="meta-cookies.html">Meta Cookies</a>
   </nav>
 
   <div class="warning">
@@ -196,7 +197,7 @@
         <td>GTM container → Tag 8 (Meta Pixel via GTM)</td>
         <td><code>_fbp</code></td>
         <td>Marketing</td>
-        <td class="live">Live</td>
+        <td class="live">Live — see <a href="meta-cookies.html">Meta Cookies</a> page for full Meta cookie documentation</td>
       </tr>
       <tr>
         <td>B — GA4 Stream 2</td>
