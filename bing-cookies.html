@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Site — Bing / Microsoft Cookies</title>
+  <meta name="google-adsense-account" content="ca-pub-7344776715655315">
+  <link rel="stylesheet" href="assets/style.css">
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION A — Bing Ads UET (Tag ID: 343251198)   [REAL]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Loads bat.js from bat.bing.net — Microsoft's Universal Event Tracking
+      (UET) library for Bing Ads (Microsoft Advertising).
+    • On load fires a pageLoad event and sets first-party cookies.
+    • enableAutoSpaTracking: true — UET automatically fires page view events
+      when the browser URL changes without a full page reload (SPA behaviour).
+    • Sends anonymised event data to Microsoft for conversion tracking,
+      audience building, and bid optimisation.
+  Tag ID: 343251198
+  Cookies produced (first-party, our domain):
+    _uetsid    Marketing   UET session identifier         30 minutes
+    _uetvid    Marketing   UET visitor identifier         180 days
+    MUID       Marketing   Microsoft User ID (shared across Microsoft properties)  1 year
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+    (function(w, d, t, u, o) {
+      w[u] = w[u] || [], o.ts = (new Date).getTime();
+      var n = d.createElement(t);
+      n.src = "https://bat.bing.net/bat.js?ti=" + o.ti + ("uetq" != u ? "&q=" + u : ""),
+      n.async = 1,
+      n.onload = n.onreadystatechange = function() {
+        var s = this.readyState;
+        s && "loaded" !== s && "complete" !== s ||
+        (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null)
+      };
+      var i = d.getElementsByTagName(t)[0];
+      i.parentNode.insertBefore(n, i);
+    })(window, document, "script", "uetq", { ti: "343251198", enableAutoSpaTracking: true });
+  </script>
+  <!-- End Section A -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION B — Microsoft Clarity   [REAL — Project ID: wy0xa34b85]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Loads the Clarity tag from clarity.ms — sets first-party cookies to
+      track users and sessions for heatmaps and session replays.
+    • Clarity is separate from Bing Ads UET — no ad account needed.
+  Project ID: wy0xa34b85
+  Cookies (Analytics / First-party):
+    _clck   Clarity user identifier     1 year
+    _clsk   Clarity session identifier  1 day
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "wy0xa34b85");
+  </script>
+  <!-- End Section B -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION C — Bing Maps iframe (third-party Microsoft cookies)   [REAL]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Embeds a Bing Maps iframe that loads directly from bing.com.
+    • When the iframe loads, Microsoft's servers write cookies on the
+      BING.COM domain via Set-Cookie response headers.
+    • These are third-party cookies from our site's perspective — they
+      appear under bing.com in DevTools → Application → Cookies,
+      NOT under our domain.
+  WHY THESE CANNOT BE FAKED WITH document.cookie:
+    • document.cookie can only write first-party cookies on our origin.
+    • MUID (on bing.com), MR, SRCHUSR etc. are written by bing.com's
+      servers only — no amount of inline scripting can replicate them.
+  Cookies produced (appear under bing.com in DevTools):
+    MUID     Marketing   Microsoft User ID (copy on bing.com domain)    1 year
+    MR       Functional  Cookie acceptance / tracking pixel marker      7 days
+    SRCHUSR  Marketing   Bing search user data                          1 year
+    SRCHD    Functional  Bing search preferences &amp; settings         1 year
+    _SS      Functional  Bing session state                             Session
+    MSFPC    Marketing   Microsoft First Party Cookie (cross-property)  1 year
+  Browser note: Chrome (no ad-blocker) will set these. Safari and Firefox
+  block them by default under ITP / ETP.
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+
+</head>
+<body>
+
+  <h1>Bing / Microsoft Cookies — All-in-One Test Page</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="spa-page.html">SPA Page</a>
+    <a href="iframe-page.html">Iframe Page</a>
+    <a href="google-cookies.html">Google Cookies</a>
+    <a href="meta-cookies.html">Meta Cookies</a>
+    <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="cookie-reader.html">Cookie Reader</a>
+  </nav>
+
+  <div class="warning">
+    <strong>&#9888; All Microsoft / Bing tags load freely on this page — no consent banner.</strong>
+    Single-pane debugging surface for every Bing Ads and Microsoft cookie.
+    Open DevTools → Application → Cookies to observe them in real time.
+  </div>
+
+  <!-- ── About Bing Ads, UET & Microsoft Cookies ──────────────────────── -->
+  <h2>About Bing Ads, UET &amp; Microsoft Cookies</h2>
+
+  <p>
+    <strong>Microsoft Advertising</strong> (formerly Bing Ads) is Microsoft's
+    paid search and display advertising platform. Ads appear on Bing, Yahoo,
+    MSN, and the Microsoft Audience Network. Like Google Ads, it uses a
+    tracking tag to measure conversions and build remarketing audiences.
+  </p>
+  <p>
+    <strong>Universal Event Tracking (UET)</strong> is Microsoft Advertising's
+    equivalent of the Google Ads conversion tag. It loads <code>bat.js</code>
+    from <code>bat.bing.net</code>, tracks user events (page views, custom
+    events, purchases), and writes first-party cookies to persist visitor and
+    session identities. A single UET tag covers all Microsoft Advertising
+    campaigns — unlike Google Ads, there is no per-campaign tag.
+  </p>
+  <p>
+    <strong>Microsoft Clarity</strong> is a free behavioural analytics tool
+    (heatmaps, session recordings, click maps). It is separate from Bing Ads
+    but frequently deployed alongside UET. It writes its own first-party
+    cookies (<code>_clck</code>, <code>_clsk</code>) and sends session data
+    to <code>clarity.microsoft.com</code>. Consent categorisation: Analytics.
+  </p>
+  <p>
+    <strong>Microsoft / Bing third-party cookies</strong> are written by
+    <code>bing.com</code> and <code>microsoft.com</code> servers when any
+    Microsoft-hosted content loads on your page — such as a Bing Maps embed,
+    a Microsoft SSO button, or a Bing search widget.
+  </p>
+
+  <h3>Three ways Microsoft / Bing cookies get set on a website</h3>
+  <ol>
+    <li>
+      <strong>Bing Ads UET tag (<code>bat.js</code>) — first-party:</strong>
+      Include the UET snippet in <code>&lt;head&gt;</code> with your Tag ID.
+      Cookies <code>_uetsid</code>, <code>_uetvid</code>, and <code>MUID</code>
+      are written on first page load. <code>_uetsid</code> refreshes on each
+      new session; <code>_uetvid</code> persists for 180 days across sessions.
+      With <code>enableAutoSpaTracking: true</code>, UET also fires on SPA route
+      changes without any extra code.
+    </li>
+    <li>
+      <strong>Microsoft Clarity script — first-party:</strong>
+      Embed the Clarity snippet (requires a Project ID from
+      <code>clarity.microsoft.com</code>). Writes <code>_clck</code> (user ID,
+      1 year) and <code>_clsk</code> (session ID, 1 day). No ad account is
+      needed — Clarity is free and independent of Microsoft Advertising.
+    </li>
+    <li>
+      <strong>Microsoft-hosted content iframes — third-party:</strong>
+      Embedding Bing Maps, a Microsoft SSO button, or any iframe from
+      <code>bing.com</code> / <code>microsoft.com</code> causes those domains'
+      servers to write cookies on their own domains. These are third-party
+      cookies from your site's perspective and cannot be replicated with
+      <code>document.cookie</code>.
+    </li>
+  </ol>
+
+  <!-- ── Complete Microsoft / Bing Cookie Reference ───────────────────── -->
+  <h2>Complete Microsoft / Bing Cookie Reference</h2>
+  <table id="ref-table">
+    <thead>
+      <tr>
+        <th>Cookie</th>
+        <th>Category</th>
+        <th>Purpose</th>
+        <th>Type</th>
+        <th>Set By / Trigger</th>
+        <th>Expiry</th>
+        <th>Status on This Page</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>_uetsid</code></td>
+        <td>Marketing</td>
+        <td>UET session identifier — tracks a single browsing session for conversion attribution</td>
+        <td>First-party</td>
+        <td>Bing Ads UET (<code>bat.js</code>) — page load</td>
+        <td>30 minutes</td>
+        <td class="real">Real — Section A</td>
+      </tr>
+      <tr>
+        <td><code>_uetvid</code></td>
+        <td>Marketing</td>
+        <td>UET visitor identifier — persists across sessions for remarketing audiences and frequency capping</td>
+        <td>First-party</td>
+        <td>Bing Ads UET (<code>bat.js</code>) — page load</td>
+        <td>180 days</td>
+        <td class="real">Real — Section A</td>
+      </tr>
+      <tr>
+        <td><code>MUID</code></td>
+        <td>Marketing</td>
+        <td>Microsoft User ID — shared identifier across all Microsoft properties (Bing, MSN, Outlook, Edge etc.) for cross-property user tracking</td>
+        <td>First-party</td>
+        <td>Bing Ads UET (<code>bat.js</code>) — page load</td>
+        <td>1 year</td>
+        <td class="real">Real — Section A</td>
+      </tr>
+      <tr>
+        <td><code>_clck</code></td>
+        <td>Analytics</td>
+        <td>Microsoft Clarity user identifier — unique ID persisted across sessions for heatmap and replay data</td>
+        <td>First-party</td>
+        <td>Microsoft Clarity script — <code>clarity.ms/tag/wy0xa34b85</code></td>
+        <td>1 year</td>
+        <td class="real">Real — Section B (Project ID: wy0xa34b85)</td>
+      </tr>
+      <tr>
+        <td><code>_clsk</code></td>
+        <td>Analytics</td>
+        <td>Microsoft Clarity session identifier — scoped to a single visit for session replay stitching</td>
+        <td>First-party</td>
+        <td>Microsoft Clarity script — <code>clarity.ms/tag/wy0xa34b85</code></td>
+        <td>1 day</td>
+        <td class="real">Real — Section B (Project ID: wy0xa34b85)</td>
+      </tr>
+      <tr>
+        <td><code>MUID</code> <em>(on bing.com)</em></td>
+        <td>Marketing</td>
+        <td>Microsoft User ID — third-party copy on bing.com domain for cross-site ad targeting</td>
+        <td>Third-party</td>
+        <td>bing.com — set when any Microsoft-hosted iframe loads</td>
+        <td>1 year</td>
+        <td class="real">Real — Chrome only, appears under bing.com (Section C)</td>
+      </tr>
+      <tr>
+        <td><code>MR</code></td>
+        <td>Functional</td>
+        <td>Tracking pixel acceptance marker — indicates whether the browser has loaded Microsoft tracking pixels</td>
+        <td>Third-party</td>
+        <td>bing.com via iframe (Section C)</td>
+        <td>7 days</td>
+        <td class="real">Real — Chrome only, appears under bing.com</td>
+      </tr>
+      <tr>
+        <td><code>SRCHUSR</code></td>
+        <td>Marketing</td>
+        <td>Bing search user data — stores personalisation signals for search results and ads</td>
+        <td>Third-party</td>
+        <td>bing.com via iframe</td>
+        <td>1 year</td>
+        <td class="real">Real — Chrome only, appears under bing.com</td>
+      </tr>
+      <tr>
+        <td><code>SRCHD</code></td>
+        <td>Functional</td>
+        <td>Bing search preferences and settings (SafeSearch level, language, region)</td>
+        <td>Third-party</td>
+        <td>bing.com via iframe</td>
+        <td>1 year</td>
+        <td class="real">Real — Chrome only, appears under bing.com</td>
+      </tr>
+      <tr>
+        <td><code>_SS</code></td>
+        <td>Functional</td>
+        <td>Bing session state — tracks the current search session within bing.com</td>
+        <td>Third-party</td>
+        <td>bing.com via iframe</td>
+        <td>Session</td>
+        <td class="real">Real — Chrome only, appears under bing.com</td>
+      </tr>
+      <tr>
+        <td><code>MSFPC</code></td>
+        <td>Marketing</td>
+        <td>Microsoft First Party Cookie — cross-property user ID shared across Microsoft web properties for ad targeting</td>
+        <td>Third-party</td>
+        <td>bing.com / microsoft.com via iframe or Microsoft ad serving</td>
+        <td>1 year</td>
+        <td class="real">Real — Chrome only, appears under bing.com or microsoft.com</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Coverage Summary ──────────────────────────────────────────────── -->
+  <h2>Cookie Coverage — What This Page Loads</h2>
+  <table id="coverage-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Mechanism</th>
+        <th>Cookie(s) Set</th>
+        <th>Category</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — Bing Ads UET</td>
+        <td>Direct <code>bat.js</code> (Tag ID: 343251198)</td>
+        <td><code>_uetsid</code>, <code>_uetvid</code>, <code>MUID</code></td>
+        <td>Marketing · First-party</td>
+        <td class="real">Real</td>
+      </tr>
+      <tr>
+        <td>B — Microsoft Clarity</td>
+        <td>Clarity tag <code>clarity.ms/tag/wy0xa34b85</code></td>
+        <td><code>_clck</code>, <code>_clsk</code></td>
+        <td>Analytics · First-party</td>
+        <td class="real">Real — Project ID: wy0xa34b85</td>
+      </tr>
+      <tr>
+        <td>C — Bing Maps iframe</td>
+        <td>Bing Maps embed loaded from <code>bing.com</code></td>
+        <td><code>MUID</code> (bing.com), <code>MR</code>, <code>SRCHUSR</code>, <code>SRCHD</code>, <code>_SS</code>, <code>MSFPC</code></td>
+        <td>Marketing / Functional · Third-party (bing.com)</td>
+        <td class="real">Real — Chrome (no ad-blocker) only; appear under <strong>bing.com</strong> in DevTools</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── What Loads and What It Sets ─────────────────────────────────────── -->
+  <h2>What Loads and What It Sets</h2>
+  <table id="script-map-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Script / URL / Mechanism</th>
+        <th>Cookie(s) Written</th>
+        <th>Written By</th>
+        <th>Domain</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — Bing Ads UET</td>
+        <td><code>https://bat.bing.com/bat.js</code> (Tag ID: 343251198)</td>
+        <td><code>_uetsid</code>, <code>_uetvid</code>, <code>MUID</code></td>
+        <td><code>document.cookie</code> via UET SDK</td>
+        <td>First-party (this domain) — <code>MUID</code> also appears on <code>bing.com</code></td>
+      </tr>
+      <tr>
+        <td>A — UET (click ID)</td>
+        <td>Page URL with <code>?msclkid=&lt;value&gt;</code></td>
+        <td><code>_uet_msclkid</code></td>
+        <td><code>document.cookie</code> via UET SDK — only on landing with <code>msclkid=</code></td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>B — Microsoft Clarity</td>
+        <td><code>https://www.clarity.ms/tag/wy0xa34b85</code></td>
+        <td><code>_clck</code>, <code>_clsk</code></td>
+        <td><code>document.cookie</code> via Clarity SDK</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>C — Bing Maps iframe</td>
+        <td><code>https://www.bing.com/maps/embed?...</code></td>
+        <td><code>MUID</code>, <code>MR</code>, <code>SRCHUSR</code>, <code>SRCHD</code>, <code>_SS</code>, <code>MSFPC</code></td>
+        <td><code>Set-Cookie</code> header by Microsoft's servers</td>
+        <td>Third-party (<code>bing.com</code>) — Chrome only, no ad-blocker</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Section C: Bing Maps iframe ──────────────────────────────────── -->
+  <h2>Section C — Bing Maps Embed (triggers third-party Microsoft cookies)</h2>
+  <p>
+    The map below loads directly from <code>bing.com</code>. When it renders,
+    Microsoft's servers write third-party cookies on the <code>bing.com</code>
+    domain. To see them: DevTools → Application → Cookies → expand
+    <strong>bing.com</strong> (not this site's domain).
+  </p>
+  <div style="margin:16px 0;padding:16px;background:#f0f4f8;border-radius:4px;border-left:4px solid #008272;">
+    <p style="margin:0 0 10px;font-size:13px;color:#555;">Bing Maps embed — loads from bing.com and triggers third-party cookies:</p>
+    <iframe
+      src="https://www.bing.com/maps/embed?h=300&w=560&cp=51.5074~-0.1278&lvl=12&typ=d&sty=r&src=SHELL&FORM=MBEDV8"
+      width="560" height="300"
+      style="border:none;overflow:hidden;display:block;"
+      scrolling="no" frameborder="0"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+  <div class="warning" style="margin-top:8px;">
+    <strong>Browser note:</strong> Chrome (no ad-blocker) sets <code>MUID</code>,
+    <code>MR</code>, <code>SRCHUSR</code>, <code>SRCHD</code>, <code>_SS</code>,
+    <code>MSFPC</code> from this iframe. Safari and Firefox block them by default
+    under ITP / ETP. These cookies appear under <strong>bing.com</strong> in
+    DevTools, not under this site's domain.
+  </div>
+
+  <!-- ── Debug Helpers ─────────────────────────────────────────────────── -->
+  <h2>Debug Helpers</h2>
+  <ul>
+    <li>
+      <strong>Check UET queue:</strong> run <code>window.uetq</code> in the
+      browser console to inspect all UET event calls and the consent state.
+    </li>
+    <li>
+      <strong>Microsoft Ads Click ID (msclkid):</strong> Microsoft Advertising
+      uses the <code>msclkid=</code> URL parameter for auto-tagging (equivalent
+      to Google's <code>gclid=</code>). The UET tag reads this parameter for
+      click attribution. To simulate:
+      <button onclick="simulateMsclkid()">Reload with ?msclkid=test-ms-click-123</button>
+    </li>
+    <li>
+      <strong>Clear URL params:</strong>
+      <button onclick="clearParams()">Remove ?msclkid from URL</button>
+    </li>
+    <li>
+      <strong>Clarity dashboard:</strong> view heatmaps and session replays at
+      <a href="https://clarity.microsoft.com" target="_blank">clarity.microsoft.com</a>
+      — Project ID <code>wy0xa34b85</code> is live (Section B).
+    </li>
+    <li>
+      <strong>Consent Mode check:</strong> run <code>window.uetq</code> in
+      console after a consent interaction — the array should contain
+      <code>{ convConsentMode: true }</code> or <code>{ convConsentMode: false }</code>.
+    </li>
+  </ul>
+
+  <!-- ── Microsoft UET Consent Mode Reference ─────────────────────────── -->
+  <h2>Microsoft UET Consent Mode — Enforcement Reference</h2>
+  <p>
+    Microsoft UET supports a consent API via the <code>uetq</code> queue.
+    On the enforcement branch, consent is <strong>denied by default</strong>
+    before UET initialises, then updated based on the user's marketing consent.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Call</th>
+        <th>When</th>
+        <th>Effect</th>
+        <th>Cookies Gated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>uetq.push('set',{convConsentMode:false})</code></td>
+        <td>Before <code>bat.js</code> loads — default state</td>
+        <td>UET loads but operates in <strong>consent-denied mode</strong> — conversion events not sent, no audience data collected</td>
+        <td><code>_uetsid</code>, <code>_uetvid</code>, <code>MUID</code></td>
+      </tr>
+      <tr>
+        <td><code>uetq.push('set',{convConsentMode:true})</code></td>
+        <td>After user accepts marketing consent</td>
+        <td>Full UET tracking enabled — events sent, remarketing audiences built, conversion attribution active</td>
+        <td>All above unlocked</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;">
+    Microsoft Clarity does not have a native consent mode API. On the enforcement
+    branch, Clarity is gated by blocking the script tag entirely until Analytics
+    consent is granted (using <code>type="text/plain"</code> blocking).
+    The Bing Maps iframe (Section C) third-party cookies are gated by withholding
+    the iframe <code>src</code> until consent.
+  </p>
+
+  <footer>
+    Cookie Consent Test Site — Developer testing environment only.<br>
+    Bing Cookies page · UET Tag ID: 343251198
+  </footer>
+
+  <script src="assets/test-helpers.js"></script>
+
+  <script>
+    function simulateMsclkid() {
+      var url = window.location.href.split('?')[0] + '?msclkid=test-ms-click-123';
+      window.location.href = url;
+    }
+
+    function clearParams() {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+  </script>
+
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #eaf2fb; }
+    tr:nth-child(even) td { background: #fafafa; }
+    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+    button { margin: 4px 6px 4px 0; padding: 6px 12px; cursor: pointer;
+             background: #2e86c1; color: #fff; border: none; border-radius: 4px; font-size: 13px; }
+    button:hover { background: #1b6fa8; }
+    a { color: #2e86c1; }
+    .real    { color: #1a7a2e; font-weight: bold; }
+    .dummy   { color: #7a4f00; }
+    .scenario { color: #8a6d00; }
+    #ref-table .real     { background: #eaffea; }
+    #ref-table .dummy    { background: #fdf0e0; }
+    #ref-table .scenario { background: #fff8e1; }
+    #coverage-table .real  { background: #eaffea; }
+    #coverage-table .dummy { background: #fdf0e0; }
+  </style>
+</body>
+</html>

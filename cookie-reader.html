@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Site — Cookie Reader</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <!--
+  NO tracking scripts on this page — it is a pure debugging utility.
+  It reads and displays whatever cookies the browser already has for this
+  origin (set by visiting other pages in this session).
+  -->
+</head>
+<body>
+  <h1>Cookie Reader — Universal Inspector</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="spa-page.html">SPA Page</a>
+    <a href="iframe-page.html">Iframe Page</a>
+    <a href="google-cookies.html">Google Cookies</a>
+    <a href="meta-cookies.html">Meta Cookies</a>
+    <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="cookie-reader.html">Cookie Reader</a>
+  </nav>
+
+  <div class="warning">
+    <strong>&#9888; No tracking scripts on this page.</strong>
+    This is a read-only debugging tool. It shows all first-party cookies
+    currently set on this origin. Visit other pages first to populate cookies,
+    then return here to inspect them.
+  </div>
+
+  <!-- ── Summary bar ───────────────────────────────────────────────────── -->
+  <div id="summary-bar" style="display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;"></div>
+
+  <!-- ── Controls ─────────────────────────────────────────────────────── -->
+  <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <button onclick="refreshCookies()">&#8635; Refresh</button>
+    <button onclick="setFilter('all')" id="btn-all" class="filter-btn active">All</button>
+    <button onclick="setFilter('Analytics')" id="btn-Analytics" class="filter-btn">Analytics</button>
+    <button onclick="setFilter('Marketing')" id="btn-Marketing" class="filter-btn">Marketing</button>
+    <button onclick="setFilter('Functional')" id="btn-Functional" class="filter-btn">Functional</button>
+    <button onclick="setFilter('Others')" id="btn-Others" class="filter-btn">Others</button>
+    <button onclick="setFilter('Unknown')" id="btn-Unknown" class="filter-btn">Unknown</button>
+    <span style="margin-left:auto;font-size:13px;color:#7f8c8d;" id="cookie-ts"></span>
+  </div>
+
+  <!-- ── Cookie table ──────────────────────────────────────────────────── -->
+  <table id="cookie-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Cookie Name</th>
+        <th>Category</th>
+        <th>Set By</th>
+        <th>Value</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="cookie-tbody">
+      <tr><td colspan="6" style="text-align:center;color:#888;">Loading…</td></tr>
+    </tbody>
+  </table>
+  <p id="no-match" style="display:none;color:#888;font-size:14px;text-align:center;padding:16px;">
+    No cookies in this category.
+  </p>
+
+  <!-- ── Third-party note ──────────────────────────────────────────────── -->
+  <div style="margin-top:24px;padding:12px 16px;background:#f0f4f8;border-radius:4px;font-size:13px;color:#444;">
+    <strong>Third-party cookies are not shown here.</strong>
+    They are scoped to external domains (facebook.com, bing.com, doubleclick.net)
+    and are not accessible to JavaScript on this origin. To see them:
+    DevTools → Application → Cookies → expand the external domain.
+  </div>
+
+  <!-- ── How to use ────────────────────────────────────────────────────── -->
+  <h2>How to Use This Page</h2>
+  <ol>
+    <li>Visit any other page on this site to let tracking scripts set cookies.</li>
+    <li>Return here (or refresh). All cookies set during that session appear in the table above.</li>
+    <li>Use the category filter buttons to focus on Analytics, Marketing, Functional, or Others.</li>
+    <li>Use <strong>Delete</strong> on any row to remove a specific cookie — useful for testing what the consent banner does on first visit, or for verifying that the enforcement branch correctly deletes cookies on rejection.</li>
+    <li>After deleting, go back to the relevant page to confirm the cookie gets re-set.</li>
+  </ol>
+
+  <!-- ── Cookie meta reference ─────────────────────────────────────────── -->
+  <h2>Cookie Category Reference</h2>
+  <table id="ref-table">
+    <thead>
+      <tr><th>Cookie</th><th>Category</th><th>Vendor</th><th>Expiry</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>_ga</code></td><td>Analytics</td><td>Google Analytics 4</td><td>2 years</td></tr>
+      <tr><td><code>_ga_*</code></td><td>Analytics</td><td>GA4 stream companion</td><td>2 years</td></tr>
+      <tr><td><code>_gid</code></td><td>Analytics</td><td>Google Analytics 4 (legacy)</td><td>24 hours</td></tr>
+      <tr><td><code>_gcl_au</code></td><td>Marketing</td><td>Google — Conversion Linker (GTM Tag 9)</td><td>90 days</td></tr>
+      <tr><td><code>_gcl_aw</code></td><td>Marketing</td><td>Google Ads — click ID (gclid= param)</td><td>90 days</td></tr>
+      <tr><td><code>gtm-session-start</code></td><td>Functional</td><td>Google Tag Manager — Conversion Linker</td><td>Session</td></tr>
+      <tr><td><code>_fbp</code></td><td>Marketing</td><td>Meta Pixel</td><td>90 days</td></tr>
+      <tr><td><code>_fbc</code></td><td>Marketing</td><td>Meta Pixel — click ID (fbclid= param)</td><td>90 days</td></tr>
+      <tr><td><code>th_capi_em</code></td><td>Marketing</td><td>Meta CAPI — hashed email (dummy)</td><td>24 hours</td></tr>
+      <tr><td><code>th_capi_fn</code></td><td>Marketing</td><td>Meta CAPI — hashed first name (dummy)</td><td>24 hours</td></tr>
+      <tr><td><code>th_capi_ln</code></td><td>Marketing</td><td>Meta CAPI — hashed last name (dummy)</td><td>24 hours</td></tr>
+      <tr><td><code>th_capi_ph</code></td><td>Marketing</td><td>Meta CAPI — hashed phone (dummy)</td><td>24 hours</td></tr>
+      <tr><td><code>_uetsid</code></td><td>Marketing</td><td>Bing Ads UET — session ID</td><td>30 min</td></tr>
+      <tr><td><code>_uetvid</code></td><td>Marketing</td><td>Bing Ads UET — visitor ID</td><td>180 days</td></tr>
+      <tr><td><code>MUID</code></td><td>Marketing</td><td>Microsoft User ID — bat.js</td><td>1 year</td></tr>
+      <tr><td><code>_clck</code></td><td>Analytics</td><td>Microsoft Clarity — user ID</td><td>1 year</td></tr>
+      <tr><td><code>_clsk</code></td><td>Analytics</td><td>Microsoft Clarity — session ID</td><td>1 day</td></tr>
+      <tr><td><code>user_prefs</code></td><td>Functional</td><td>Site — language &amp; theme (dummy)</td><td>1 day</td></tr>
+      <tr><td><code>session_id</code></td><td>Functional</td><td>Site — session state (dummy)</td><td>30 min</td></tr>
+      <tr><td><code>marketing_id</code></td><td>Others</td><td>Fake marketing pixel (dummy)</td><td>1 hour</td></tr>
+      <tr><td><code>campaign_id</code></td><td>Marketing</td><td>SPA page — campaign (dummy)</td><td>1 day</td></tr>
+      <tr><td><code>ab_variant</code></td><td>Marketing</td><td>SPA page — A/B variant (dummy)</td><td>1 day</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Cookie Consent Test Site — Developer testing environment only.<br>
+    Cookie Reader · No tracking scripts loaded on this page.
+  </footer>
+
+  <script>
+    // ── Full cookie knowledge base ────────────────────────────────────
+    var COOKIE_META = {
+      '_ga':              { cat: 'Analytics',  by: 'Google Analytics 4' },
+      '_gid':             { cat: 'Analytics',  by: 'Google Analytics 4 (legacy)' },
+      '_gcl_au':          { cat: 'Marketing',  by: 'Google — GTM Conversion Linker' },
+      '_gcl_aw':          { cat: 'Marketing',  by: 'Google Ads — click ID (gclid= param)' },
+      'gtm-session-start':{ cat: 'Functional', by: 'Google Tag Manager — Conversion Linker' },
+      '_fbp':             { cat: 'Marketing',  by: 'Meta Pixel (fbevents.js)' },
+      '_fbc':             { cat: 'Marketing',  by: 'Meta Pixel — click ID (fbclid= param)' },
+      'th_capi_em':       { cat: 'Marketing',  by: 'Meta CAPI — hashed email (DUMMY)' },
+      'th_capi_fn':       { cat: 'Marketing',  by: 'Meta CAPI — hashed first name (DUMMY)' },
+      'th_capi_ln':       { cat: 'Marketing',  by: 'Meta CAPI — hashed last name (DUMMY)' },
+      'th_capi_ph':       { cat: 'Marketing',  by: 'Meta CAPI — hashed phone (DUMMY)' },
+      '_uetsid':          { cat: 'Marketing',  by: 'Bing Ads UET — session ID' },
+      '_uetvid':          { cat: 'Marketing',  by: 'Bing Ads UET — visitor ID' },
+      'MUID':             { cat: 'Marketing',  by: 'Microsoft — bat.js (Bing UET)' },
+      '_clck':            { cat: 'Analytics',  by: 'Microsoft Clarity — user ID' },
+      '_clsk':            { cat: 'Analytics',  by: 'Microsoft Clarity — session ID' },
+      'user_prefs':       { cat: 'Functional', by: 'Site inline script (DUMMY)' },
+      'session_id':       { cat: 'Functional', by: 'Site inline script (DUMMY)' },
+      'marketing_id':     { cat: 'Others',     by: 'Site inline script (DUMMY)' },
+      'campaign_id':      { cat: 'Marketing',  by: 'SPA page — campaign cookie (DUMMY)' },
+      'ab_variant':       { cat: 'Marketing',  by: 'SPA page — A/B test variant (DUMMY)' },
+    };
+
+    function getCookieMeta(name) {
+      if (COOKIE_META[name]) return COOKIE_META[name];
+      if (name.startsWith('_ga_'))      return { cat: 'Analytics', by: 'GA4 stream companion (' + name + ')' };
+      if (name.startsWith('_gcl_'))     return { cat: 'Marketing', by: 'Google Ads / Conversion Linker' };
+      if (name.startsWith('th_capi_'))  return { cat: 'Marketing', by: 'Meta CAPI (DUMMY)' };
+      if (name.startsWith('_cl'))       return { cat: 'Analytics', by: 'Microsoft Clarity' };
+      return { cat: 'Unknown', by: '— unrecognised cookie' };
+    }
+
+    var CAT_COLOURS = {
+      'Analytics':  '#1a5276',
+      'Marketing':  '#7d1f2e',
+      'Functional': '#1a7a2e',
+      'Others':     '#5d4037',
+      'Unknown':    '#616161',
+    };
+
+    var currentFilter = 'all';
+    var allRows = [];
+
+    function setFilter(cat) {
+      currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      var btn = document.getElementById('btn-' + cat);
+      if (btn) btn.classList.add('active');
+      applyFilter();
+    }
+
+    function applyFilter() {
+      var visible = 0;
+      allRows.forEach(function(r) {
+        var show = currentFilter === 'all' || r.cat === currentFilter;
+        r.el.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('no-match').style.display = (visible === 0 && allRows.length > 0) ? 'block' : 'none';
+    }
+
+    function refreshCookies() {
+      var raw = document.cookie.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
+      var tbody = document.getElementById('cookie-tbody');
+      allRows = [];
+
+      // Count per category
+      var counts = { Analytics: 0, Marketing: 0, Functional: 0, Others: 0, Unknown: 0 };
+
+      if (raw.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:24px;">No first-party cookies set yet. Visit other pages first.</td></tr>';
+      } else {
+        tbody.innerHTML = '';
+        raw.forEach(function(c, i) {
+          var idx = c.indexOf('=');
+          var name = idx > -1 ? c.substring(0, idx) : c;
+          var val  = idx > -1 ? c.substring(idx + 1) : '';
+          var m    = getCookieMeta(name);
+          var cat  = m.cat;
+          counts[cat] = (counts[cat] || 0) + 1;
+
+          var tr = document.createElement('tr');
+          var col = CAT_COLOURS[cat] || '#616161';
+          tr.innerHTML =
+            '<td>' + (i + 1) + '</td>'
+            + '<td><code>' + name + '</code></td>'
+            + '<td><span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:bold;color:#fff;background:' + col + ';">' + cat + '</span></td>'
+            + '<td style="font-size:12px;">' + m.by + '</td>'
+            + '<td style="font-size:12px;word-break:break-all;max-width:200px;">' + (val.length > 60 ? val.substring(0, 60) + '…' : val) + '</td>'
+            + '<td><button onclick="deleteCookie(\'' + name + '\')" style="background:#c0392b;font-size:11px;padding:3px 8px;">Delete</button></td>';
+          tbody.appendChild(tr);
+          allRows.push({ el: tr, cat: cat });
+        });
+        applyFilter();
+      }
+
+      // Update summary bar
+      var bar = document.getElementById('summary-bar');
+      bar.innerHTML = '<span style="font-size:13px;font-weight:bold;color:#2c3e50;align-self:center;">Total: ' + raw.length + '</span>';
+      Object.keys(counts).forEach(function(cat) {
+        if (counts[cat] > 0) {
+          var col = CAT_COLOURS[cat] || '#616161';
+          bar.innerHTML += '<span style="padding:4px 12px;border-radius:12px;font-size:13px;font-weight:bold;color:#fff;background:' + col + ';cursor:pointer;" onclick="setFilter(\'' + cat + '\')">' + cat + ': ' + counts[cat] + '</span>';
+        }
+      });
+
+      document.getElementById('cookie-ts').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString();
+    }
+
+    function deleteCookie(name) {
+      document.cookie = name + '=; path=/; max-age=0';
+      document.cookie = name + '=; max-age=0';
+      setTimeout(refreshCookies, 50);
+    }
+
+    refreshCookies();
+    setInterval(refreshCookies, 3000);
+  </script>
+
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: middle; }
+    th { background: #eaf2fb; }
+    tr:nth-child(even) td { background: #fafafa; }
+    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+    button { margin: 4px 6px 4px 0; padding: 6px 12px; cursor: pointer;
+             background: #2e86c1; color: #fff; border: none; border-radius: 4px; font-size: 13px; }
+    button:hover { background: #1b6fa8; }
+    a { color: #2e86c1; }
+    .filter-btn { background: #95a5a6; }
+    .filter-btn.active { background: #2e86c1; }
+    #ref-table td:nth-child(2) { font-size: 13px; }
+  </style>
+</body>
+</html>

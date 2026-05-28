@@ -157,6 +157,8 @@
     <a href="iframe-page.html">Iframe Page</a>
     <a href="google-cookies.html">Google Cookies</a>
     <a href="meta-cookies.html">Meta Cookies</a>
+    <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="cookie-reader.html">Cookie Reader</a>
   </nav>
 
   <div class="warning">
@@ -164,6 +166,204 @@
     This page is a single-pane debugging surface for every Google cookie.
     Open DevTools → Application → Cookies to see them land in real time.
   </div>
+
+  <!-- ── About Google Analytics, GTM & Advertising Cookies ──────────── -->
+  <h2>About Google Analytics, Tag Manager &amp; Advertising Cookies</h2>
+
+  <p>
+    <strong>Google Analytics 4 (GA4)</strong> is Google's web analytics platform.
+    It loads a JavaScript tag (<code>gtag.js</code>) that tracks user behaviour —
+    page views, scroll depth, clicks, conversions — and reports to a GA4 property
+    identified by a Measurement ID (format: <code>G-XXXXXXXXXX</code>). GA4 sets
+    first-party cookies to persist a client ID and session state across page views.
+    A single domain can send data to multiple GA4 streams simultaneously; each
+    stream gets its own session companion cookie (<code>_ga_&lt;ID&gt;</code>)
+    while the client ID (<code>_ga</code>) is shared.
+  </p>
+  <p>
+    <strong>Google Tag Manager (GTM)</strong> is a tag management system that
+    loads a single container script (<code>gtm.js</code>). That container then
+    fires other tags — GA4, Google Ads, Conversion Linker, Meta Pixel, and more —
+    based on configurable triggers and variables. GTM itself does not set any
+    cookies directly; its <em>published tags</em> do. This means the cookie
+    footprint of a GTM-enabled page depends entirely on which tags are live in
+    the GTM dashboard.
+  </p>
+  <p>
+    <strong>Google Ads &amp; Conversion Linker</strong> — Google Ads conversion
+    tracking measures actions taken on a site after a visitor clicked a Google
+    paid ad. The <em>Conversion Linker</em> tag (a built-in GTM tag type) is the
+    mechanism that bridges the ad click to the on-site conversion: it reads the
+    <code>gclid</code> URL parameter appended by Google Ads and stores it in
+    first-party cookies (<code>_gcl_au</code>, <code>_gcl_aw</code>) so it can
+    be read even if third-party cookies are blocked.
+  </p>
+  <p>
+    <strong>Google AdSense / Ad Manager (GAM)</strong> serves display ads on
+    publisher websites. When an ad renders, the browser makes requests to
+    <code>doubleclick.net</code> which sets third-party cookies on that domain
+    for ad targeting, frequency capping, and cross-site reach measurement.
+    These cookies cannot be set by our site's own scripts — they require a real
+    ad slot loading <code>gpt.js</code> from Google's servers.
+  </p>
+
+  <h3>Five ways Google cookies get set on a website</h3>
+  <ol>
+    <li>
+      <strong>GA4 direct tag (<code>gtag.js</code>) — first-party:</strong>
+      Include the GA4 async script and call <code>gtag('config','G-XXXX')</code>.
+      Cookies <code>_ga</code> and <code>_ga_&lt;ID&gt;</code> are written on
+      first page load and updated on each subsequent visit.
+    </li>
+    <li>
+      <strong>Google Tag Manager (GTM) — first-party via tags:</strong>
+      The GTM container loads and fires published tags. GA4 cookies appear
+      through Tag 1; Conversion Linker cookies through Tag 9. No cookies
+      are written if the container has no live tags.
+    </li>
+    <li>
+      <strong>GTM Conversion Linker — first-party:</strong>
+      Fires on every page load and writes <code>_gcl_au</code> (conversion
+      linker token) and <code>gtm-session-start</code> (session marker).
+      If the URL contains a <code>gclid=</code> parameter, also writes
+      <code>_gcl_aw</code> (Google Ads click ID) for cross-device attribution.
+    </li>
+    <li>
+      <strong>Google Ads conversion tag — first-party:</strong>
+      Requires a Google Ads account and an <code>AW-XXXXXXXXX</code>
+      conversion ID. Reinforces <code>_gcl_au</code> and sets
+      <code>_gcl_aw</code>. Also enables remarketing audience lists.
+    </li>
+    <li>
+      <strong>AdSense / GAM ad slot — third-party:</strong>
+      A GPT ad slot loads <code>gpt.js</code>, which fetches ads from
+      <code>doubleclick.net</code>. The ad server response sets
+      <code>IDE</code>, <code>DSID</code>, and other cookies directly on
+      the <code>doubleclick.net</code> domain — never on our origin.
+    </li>
+  </ol>
+
+  <!-- ── Complete Google Cookie Reference Table ───────────────────────── -->
+  <h2>Complete Google Cookie Reference</h2>
+  <table id="ref-table">
+    <thead>
+      <tr>
+        <th>Cookie</th>
+        <th>Category</th>
+        <th>Purpose</th>
+        <th>Type</th>
+        <th>Set By / Trigger</th>
+        <th>Expiry</th>
+        <th>Status on This Page</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>_ga</code></td>
+        <td>Analytics</td>
+        <td>GA4 client ID — uniquely identifies a browser/device; shared across all GA4 properties on this domain</td>
+        <td>First-party</td>
+        <td>GA4 (<code>gtag.js</code> or GTM Tag 1) — page load</td>
+        <td>2 years</td>
+        <td class="real">Real — Section A &amp; B</td>
+      </tr>
+      <tr>
+        <td><code>_ga_89RWJTCPLZ</code></td>
+        <td>Analytics</td>
+        <td>GA4 session companion for Stream 1 (G-89RWJTCPLZ) — stores session count and engagement data</td>
+        <td>First-party</td>
+        <td>GA4 Stream 1 via GTM Tag 1 — page load</td>
+        <td>2 years</td>
+        <td class="real">Real — Section A (GTM)</td>
+      </tr>
+      <tr>
+        <td><code>_ga_01XNDLZCYQ</code></td>
+        <td>Analytics</td>
+        <td>GA4 session companion for Stream 2 (G-01XNDLZCYQ)</td>
+        <td>First-party</td>
+        <td>GA4 Stream 2 direct <code>gtag.js</code> (Section B) — page load</td>
+        <td>2 years</td>
+        <td class="real">Real — Section B</td>
+      </tr>
+      <tr>
+        <td><code>_gid</code></td>
+        <td>Analytics</td>
+        <td>GA4 daily session identifier (legacy — rarely set on GA4 properties created after 2023)</td>
+        <td>First-party</td>
+        <td>GA4 (legacy behaviour on older properties)</td>
+        <td>24 hours</td>
+        <td class="scenario">Not expected — newer GA4 properties do not set this</td>
+      </tr>
+      <tr>
+        <td><code>_gcl_au</code></td>
+        <td>Marketing</td>
+        <td>Google conversion linker token — bridges ad click events to on-site conversions for attribution</td>
+        <td>First-party</td>
+        <td>GTM Conversion Linker (Tag 9) — fires on every page load</td>
+        <td>90 days</td>
+        <td class="real">Real — Section A (GTM Tag 9)</td>
+      </tr>
+      <tr>
+        <td><code>_gcl_aw</code></td>
+        <td>Marketing</td>
+        <td>Google Ads click ID — stores the <code>gclid</code> URL param for cross-device conversion attribution</td>
+        <td>First-party</td>
+        <td>GTM Conversion Linker — only on <code>gclid=</code> URL landing (simulated as dummy on this page)</td>
+        <td>90 days</td>
+        <td class="dummy">Dummy — use "Reload with ?gclid=test123" for real GTM-written value</td>
+      </tr>
+      <tr>
+        <td><code>gtm-session-start</code></td>
+        <td>Functional</td>
+        <td>GTM first-party session marker — written exclusively by the GTM Conversion Linker tag (not by gtag.js); records the millisecond timestamp of the session start</td>
+        <td>First-party</td>
+        <td>GTM Conversion Linker (Tag 9) — every page load</td>
+        <td>Session</td>
+        <td class="real">Real — Section A (GTM Tag 9, Conversion Linker with Enable Linking checked)</td>
+      </tr>
+      <tr>
+        <td><code>IDE</code></td>
+        <td>Marketing</td>
+        <td>DoubleClick / DV360 cross-site visitor ID for ad targeting and frequency capping</td>
+        <td>Third-party</td>
+        <td>doubleclick.net — written when a GAM/AdSense ad slot loads</td>
+        <td>1 year</td>
+        <td class="pending">Pending — AdSense script loaded (Section E); appears in Chrome once ads serve</td>
+      </tr>
+      <tr>
+        <td><code>DSID</code></td>
+        <td>Marketing</td>
+        <td>DoubleClick signed-in user ID — links ad exposure to an authenticated Google account</td>
+        <td>Third-party</td>
+        <td>doubleclick.net — only when user is signed into a Google account</td>
+        <td>2 weeks</td>
+        <td class="pending">Pending — requires signed-in user + active ad slot</td>
+      </tr>
+      <tr>
+        <td><code>AEC</code></td>
+        <td>Functional</td>
+        <td>Google anti-abuse and fraud prevention token</td>
+        <td>Third-party</td>
+        <td>google.com — set during doubleclick.net ad requests</td>
+        <td>6 months</td>
+        <td class="pending">Pending — requires AdSense/GAM ad slot</td>
+      </tr>
+      <tr>
+        <td><code>NID</code></td>
+        <td>Functional</td>
+        <td>Google account preferences and ad personalisation settings</td>
+        <td>Third-party</td>
+        <td>google.com — set during signed-in ad interactions</td>
+        <td>6 months</td>
+        <td class="pending">Pending — requires signed-in Google account + ad slot</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;">
+    <strong>Note:</strong> Any GA4 property will produce a <code>_ga_&lt;stream-ID&gt;</code>
+    session companion cookie. The pattern <code>_ga_XXXXXXXXXX</code> always represents
+    a GA4 stream — the suffix is the last part of the Measurement ID.
+  </p>
 
   <!-- ── Cookie Coverage Table ───────────────────────────────────────── -->
   <h2>Cookie Coverage — What This Page Loads</h2>
@@ -220,33 +420,103 @@
         <td>Marketing (third-party, doubleclick.net)</td>
         <td class="live">Live — script loaded. Cookies appear in Chrome (no ad-blocker) once ads serve. Cannot be faked — set by doubleclick.net, not our domain. Blocked by Safari/Firefox ITP.</td>
       </tr>
+      <tr>
+        <td>F — Google Maps iframe</td>
+        <td>Google Maps embed from <code>google.com</code></td>
+        <td><code>NID</code>, <code>CONSENT</code>, <code>AEC</code></td>
+        <td>Functional (third-party, google.com)</td>
+        <td class="real">Real — Chrome (no ad-blocker) only; appear under <strong>google.com</strong> in DevTools → Application → Cookies</td>
+      </tr>
     </tbody>
   </table>
 
-  <!-- ── Live Cookie Reader ──────────────────────────────────────────── -->
-  <h2>Live Cookie Reader</h2>
-  <p>
-    Refreshes every 3 seconds. Shows every cookie the browser has for this
-    origin right now — not just Google cookies. Useful for verifying which
-    cookies land and when.
+  <!-- ── Script / URL → Cookie Mapping ───────────────────────────────── -->
+  <h2>What Loads and What It Sets</h2>
+  <p style="font-size:13px;color:#555;">
+    Exact mapping from each script URL or inline script to the cookie(s) it
+    produces, and the mechanism that writes them.
+    Use the <a href="cookie-reader.html">Cookie Reader</a> page to inspect all
+    first-party cookies currently set.
   </p>
-  <button onclick="refreshCookies()">Refresh now</button>
-  <button onclick="clearDisplay()">Clear</button>
-  <p id="cookie-ts" style="font-size:13px;color:#7f8c8d;margin-top:4px;"></p>
-  <table id="cookie-table">
+  <table id="script-map-table">
     <thead>
       <tr>
-        <th>#</th>
-        <th>Cookie Name</th>
-        <th>Value (truncated)</th>
-        <th>Category</th>
-        <th>Set By</th>
+        <th>Section</th>
+        <th>Script / URL</th>
+        <th>Cookie(s) Written</th>
+        <th>Written By</th>
+        <th>Domain</th>
       </tr>
     </thead>
-    <tbody id="cookie-tbody">
-      <tr><td colspan="5" style="text-align:center;color:#888;">Loading…</td></tr>
+    <tbody>
+      <tr>
+        <td>A — GTM → Tag 1</td>
+        <td><code>https://www.googletagmanager.com/gtm.js?id=GTM-N8M7CRQR</code> fires GA4 tag</td>
+        <td><code>_ga</code>, <code>_ga_89RWJTCPLZ</code></td>
+        <td>GA4 SDK writes via <code>document.cookie</code></td>
+        <td>First-party (our domain)</td>
+      </tr>
+      <tr>
+        <td>A — GTM → Tag 9</td>
+        <td><code>https://www.googletagmanager.com/gtm.js?id=GTM-N8M7CRQR</code> fires Conversion Linker</td>
+        <td><code>_gcl_au</code>, <code>gtm-session-start</code></td>
+        <td>Conversion Linker tag writes via <code>document.cookie</code></td>
+        <td>First-party (our domain)</td>
+      </tr>
+      <tr>
+        <td>B — GA4 Stream 2</td>
+        <td><code>https://www.googletagmanager.com/gtag/js?id=G-01XNDLZCYQ</code></td>
+        <td><code>_ga</code>, <code>_ga_01XNDLZCYQ</code></td>
+        <td>gtag.js SDK writes via <code>document.cookie</code></td>
+        <td>First-party (our domain)</td>
+      </tr>
+      <tr>
+        <td>D — Google Ads</td>
+        <td>Inline <code>document.cookie</code> (DUMMY)</td>
+        <td><code>_gcl_aw</code></td>
+        <td>Direct <code>document.cookie</code> write — simulates GTM Conversion Linker on <code>gclid=</code> landing</td>
+        <td>First-party (our domain) — DUMMY</td>
+      </tr>
+      <tr>
+        <td>E — AdSense</td>
+        <td><code>https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7344776715655315</code></td>
+        <td><code>IDE</code>, <code>DSID</code> (once ads serve)</td>
+        <td>doubleclick.net server writes via <code>Set-Cookie</code> response header</td>
+        <td>Third-party (<code>doubleclick.net</code>) — Chrome only, pending ads</td>
+      </tr>
+      <tr>
+        <td>F — Google Maps</td>
+        <td><code>https://maps.google.com/maps?q=Pune&amp;output=embed</code> (iframe)</td>
+        <td><code>NID</code>, <code>CONSENT</code>, <code>AEC</code></td>
+        <td>google.com server writes via <code>Set-Cookie</code> response header</td>
+        <td>Third-party (<code>google.com</code>) — Chrome only</td>
+      </tr>
     </tbody>
   </table>
+
+  <!-- ── Section F: Google Maps iframe (third-party Google cookies) ──── -->
+  <h2>Section F — Google Maps Embed (triggers third-party Google cookies)</h2>
+  <p>
+    The map below loads from <code>google.com</code>. When it renders, Google's
+    servers write cookies on the <code>google.com</code> domain. To see them:
+    DevTools → Application → Cookies → expand <strong>google.com</strong>
+    (not this site's domain).
+  </p>
+  <div style="margin:16px 0;padding:16px;background:#f0f4f8;border-radius:4px;border-left:4px solid #4285f4;">
+    <p style="margin:0 0 10px;font-size:13px;color:#555;">Google Maps embed — loads from google.com and triggers third-party cookies:</p>
+    <iframe
+      src="https://maps.google.com/maps?q=Pune&output=embed"
+      width="560" height="300"
+      style="border:none;overflow:hidden;display:block;"
+      frameborder="0"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+  <div class="warning" style="margin-top:8px;">
+    <strong>Browser note:</strong> Chrome (no ad-blocker) sets <code>NID</code>,
+    <code>CONSENT</code>, <code>AEC</code> from this iframe under the
+    <code>google.com</code> domain. Safari and Firefox block them under ITP / ETP.
+  </div>
 
   <!-- ── dataLayer Inspector ─────────────────────────────────────────── -->
   <h2>dataLayer Inspector</h2>
@@ -335,58 +605,6 @@
   <script src="assets/test-helpers.js"></script>
 
   <script>
-    // ── Cookie category map ─────────────────────────────────────────────
-    // Maps cookie name prefixes/exact names to { category, setBy }.
-    var COOKIE_META = {
-      '_ga_89RWJTCPLZ': { cat: 'Analytics',   by: 'GA4 Stream 1 (GTM Tag 1)' },
-      '_ga_01XNDLZCYQ': { cat: 'Analytics',   by: 'GA4 Stream 2 (direct gtag)' },
-      '_ga':            { cat: 'Analytics',   by: 'GA4 (shared across streams)' },
-      '_gid':           { cat: 'Analytics',   by: 'GA4 (legacy, rarely set)' },
-      '_gcl_au':        { cat: 'Marketing',   by: 'GTM Conversion Linker (Tag 9)' },
-      '_gcl_aw':        { cat: 'Marketing',   by: 'Google Ads click ID (gclid= param)' },
-      'gtm-session-start': { cat: 'Functional', by: 'GTM Conversion Linker (Tag 9)' },
-      '_fbp':           { cat: 'Marketing',   by: 'Meta Pixel (GTM Tag 8)' },
-      '_fbc':           { cat: 'Marketing',   by: 'Meta Pixel (fbclid= param only)' },
-      '_uetsid':        { cat: 'Marketing',   by: 'Bing Ads UET (bat.js)' },
-      '_uetvid':        { cat: 'Marketing',   by: 'Bing Ads UET (bat.js)' },
-      'MUID':           { cat: 'Marketing',   by: 'Microsoft (via bat.js)' },
-      'IDE':            { cat: 'Marketing',   by: 'Google AdSense / DoubleClick (third-party, doubleclick.net)' },
-      'DSID':           { cat: 'Marketing',   by: 'Google AdSense / DoubleClick (third-party, doubleclick.net)' },
-      'user_prefs':     { cat: 'Functional',  by: 'Inline script (dummy)' },
-      'session_id':     { cat: 'Functional',  by: 'Inline script (dummy)' },
-      'marketing_id':   { cat: 'Others',      by: 'Inline script (dummy)' },
-    };
-
-    function getCookieMeta(name) {
-      if (COOKIE_META[name]) return COOKIE_META[name];
-      if (name.startsWith('_ga_'))  return { cat: 'Analytics',  by: 'GA4 stream companion' };
-      if (name.startsWith('_gcl_')) return { cat: 'Marketing',  by: 'Google Ads / Conversion Linker' };
-      return { cat: '—', by: '—' };
-    }
-
-    function refreshCookies() {
-      var raw = document.cookie.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
-      var tbody = document.getElementById('cookie-tbody');
-      if (raw.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">No cookies found for this origin.</td></tr>';
-      } else {
-        tbody.innerHTML = raw.map(function(c, i) {
-          var idx = c.indexOf('=');
-          var name = idx > -1 ? c.substring(0, idx) : c;
-          var val  = idx > -1 ? c.substring(idx + 1) : '';
-          var m    = getCookieMeta(name);
-          var shortVal = val.length > 40 ? val.substring(0, 40) + '…' : val;
-          return '<tr><td>' + (i+1) + '</td><td><code>' + name + '</code></td><td style="font-size:12px;word-break:break-all;">' + shortVal + '</td><td>' + m.cat + '</td><td style="font-size:12px;">' + m.by + '</td></tr>';
-        }).join('');
-      }
-      document.getElementById('cookie-ts').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString();
-    }
-
-    function clearDisplay() {
-      document.getElementById('cookie-tbody').innerHTML =
-        '<tr><td colspan="5" style="text-align:center;color:#888;">Cleared. Click "Refresh now" to reload.</td></tr>';
-    }
-
     function refreshDataLayer() {
       var dl = window.dataLayer || [];
       document.getElementById('datalayer-output').textContent =
@@ -414,9 +632,6 @@
       window.history.replaceState({}, '', window.location.pathname);
     }
 
-    // Auto-refresh every 3 seconds
-    refreshCookies();
-    setInterval(refreshCookies, 3000);
   </script>
 
   <style>
@@ -430,6 +645,13 @@
     button { margin: 4px 6px 4px 0; padding: 6px 12px; cursor: pointer;
              background: #2e86c1; color: #fff; border: none; border-radius: 4px; font-size: 13px; }
     button:hover { background: #1b6fa8; }
+    .real     { color: #1a7a2e; font-weight: bold; }
+    .dummy    { color: #7a4f00; }
+    .scenario { color: #8a6d00; }
+    #ref-table .real     { background: #eaffea; }
+    #ref-table .dummy    { background: #fdf0e0; }
+    #ref-table .pending  { background: #fff8e1; }
+    #ref-table .scenario { background: #fff8e1; }
     #coverage-table .live    { background: #eaffea; }
     #coverage-table .pending { background: #fff8e1; }
     #coverage-table .dummy   { background: #fdf0e0; color: #7a4f00; }

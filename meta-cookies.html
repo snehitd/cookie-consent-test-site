@@ -115,6 +115,8 @@
     <a href="iframe-page.html">Iframe Page</a>
     <a href="google-cookies.html">Google Cookies</a>
     <a href="meta-cookies.html">Meta Cookies</a>
+    <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="cookie-reader.html">Cookie Reader</a>
   </nav>
 
   <div class="warning">
@@ -224,7 +226,7 @@
         <td>Third-party</td>
         <td>Facebook Social Plugin iframe (Section C) / Pixel requests to facebook.com</td>
         <td>90 days</td>
-        <td class="real">Real — Chrome only, appears under facebook.com in DevTools</td>
+        <td class="real">Real (requires Chrome with third-party cookies enabled — blocked by default in Chrome 2024+)</td>
       </tr>
       <tr>
         <td><code>xs</code></td>
@@ -242,7 +244,7 @@
         <td>Third-party</td>
         <td>Facebook Social Plugin iframe</td>
         <td>2 years</td>
-        <td class="real">Real — Chrome only, appears under facebook.com</td>
+        <td class="real">Real (requires Chrome with third-party cookies enabled — blocked by default in Chrome 2024+)</td>
       </tr>
       <tr>
         <td><code>ps_l</code></td>
@@ -287,7 +289,7 @@
         <td>Third-party</td>
         <td>Facebook Social Plugin iframe</td>
         <td>2 years</td>
-        <td class="real">Real — Chrome only, appears under facebook.com</td>
+        <td class="real">Real (requires Chrome with third-party cookies enabled — blocked by default in Chrome 2024+)</td>
       </tr>
       <tr>
         <td><code>th_capi_em</code></td>
@@ -332,7 +334,7 @@
         <td>Third-party</td>
         <td>Facebook Social Plugin iframe</td>
         <td>7 days</td>
-        <td class="real">Real — Chrome only, appears under facebook.com</td>
+        <td class="real">Real (requires Chrome with third-party cookies enabled — blocked by default in Chrome 2024+)</td>
       </tr>
       <tr>
         <td><code>dpr</code></td>
@@ -341,7 +343,7 @@
         <td>Third-party</td>
         <td>Facebook Social Plugin iframe</td>
         <td>7 days</td>
-        <td class="real">Real — Chrome only, appears under facebook.com</td>
+        <td class="real">Real (requires Chrome with third-party cookies enabled — blocked by default in Chrome 2024+)</td>
       </tr>
       <tr>
         <td><code>wd</code></td>
@@ -350,7 +352,7 @@
         <td>Third-party</td>
         <td>Facebook Social Plugin iframe</td>
         <td>7 days</td>
-        <td class="real">Real — Chrome only, appears under facebook.com</td>
+        <td class="real">Real (requires Chrome with third-party cookies enabled — blocked by default in Chrome 2024+)</td>
       </tr>
       <tr>
         <td><code>presence</code></td>
@@ -414,7 +416,51 @@
         <td>Facebook Like button iframe from <code>facebook.com</code></td>
         <td><code>fr</code>, <code>datr</code>, <code>sb</code>, <code>locale</code>, <code>dpr</code>, <code>wd</code> + <code>xs</code>/<code>c_user</code> if logged in</td>
         <td>Marketing / Functional · Third-party (facebook.com)</td>
-        <td class="real">Real — Chrome (no ad-blocker) only; appear under <strong>facebook.com</strong> in DevTools</td>
+        <td class="real">Real — requires Chrome with third-party cookies enabled (blocked by default in Chrome 2024+); appear under <strong>facebook.com</strong> in DevTools</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── What Loads and What It Sets ─────────────────────────────────────── -->
+  <h2>What Loads and What It Sets</h2>
+  <table id="script-map-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Script / URL / Mechanism</th>
+        <th>Cookie(s) Written</th>
+        <th>Written By</th>
+        <th>Domain</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — Meta Pixel</td>
+        <td><code>https://connect.facebook.net/en_US/fbevents.js</code></td>
+        <td><code>_fbp</code></td>
+        <td><code>document.cookie</code> via fbevents.js SDK</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>A — Meta Pixel (click ID)</td>
+        <td>Page URL with <code>?fbclid=&lt;value&gt;</code></td>
+        <td><code>_fbc</code></td>
+        <td><code>document.cookie</code> via fbevents.js — only on landing with <code>fbclid=</code></td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>B — CAPI dummies</td>
+        <td>Inline <code>document.cookie</code></td>
+        <td><code>th_capi_em</code>, <code>th_capi_fn</code>, <code>th_capi_ln</code>, <code>th_capi_ph</code></td>
+        <td><code>document.cookie</code> (DUMMY — real CAPI is server-side only)</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>C — Social Plugin iframe</td>
+        <td><code>https://www.facebook.com/plugins/like.php?...</code></td>
+        <td><code>fr</code>, <code>datr</code>, <code>sb</code>, <code>locale</code>, <code>dpr</code>, <code>wd</code></td>
+        <td><code>Set-Cookie</code> header by Facebook's servers</td>
+        <td>Third-party (<code>facebook.com</code>) — requires Chrome with third-party cookies enabled (blocked by default in Chrome 2024+)</td>
       </tr>
     </tbody>
   </table>
@@ -438,10 +484,15 @@
     </iframe>
   </div>
   <div class="warning" style="margin-top:8px;">
-    <strong>Browser note:</strong> Chrome (no ad-blocker) sets <code>fr</code>, <code>datr</code>,
-    <code>sb</code>, <code>locale</code>, <code>dpr</code>, <code>wd</code> from this iframe.
-    Safari and Firefox block them by default under ITP / ETP.
-    If you are logged into Facebook, <code>xs</code> and <code>c_user</code> will also appear.
+    <strong>Third-party cookie deprecation:</strong> Chrome has phased out third-party cookies
+    (Privacy Sandbox, 2024–2025 rollout). The Facebook Like button iframe will load but
+    <strong>cookies (<code>fr</code>, <code>datr</code>, <code>sb</code> etc.) will NOT be set
+    in Chrome unless you explicitly re-enable third-party cookies.</strong><br>
+    To re-enable for testing: Chrome → Settings → Privacy and Security → Third-party cookies →
+    <em>Allow third-party cookies</em>. Or open <code>chrome://flags/#test-third-party-cookie-phaseout</code>
+    and set to Disabled.<br>
+    Firefox still allows them in most configurations. Safari blocks them via ITP regardless.
+    If logged into Facebook in your browser, <code>xs</code> and <code>c_user</code> may also appear.
   </div>
 
   <!-- ── Debug Helpers ─────────────────────────────────────────────────── -->
@@ -473,31 +524,6 @@
       a live Facebook Ads campaign targeting this URL.
     </li>
   </ul>
-
-  <!-- ── Live First-Party Cookie Reader ───────────────────────────────── -->
-  <h2>Live Cookie Reader (first-party)</h2>
-  <p>
-    Shows first-party cookies set on <em>this domain</em>. Auto-refreshes every
-    3 seconds. Third-party Meta cookies (<code>fr</code>, <code>datr</code>,
-    <code>sb</code> etc.) are set on <code>facebook.com</code> — see them in
-    DevTools → Application → Cookies → <strong>facebook.com</strong>.
-  </p>
-  <button onclick="refreshCookies()">Refresh now</button>
-  <p id="cookie-ts" style="font-size:13px;color:#7f8c8d;margin-top:4px;"></p>
-  <table id="cookie-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Cookie Name</th>
-        <th>Value (truncated)</th>
-        <th>Category</th>
-        <th>Set By</th>
-      </tr>
-    </thead>
-    <tbody id="cookie-tbody">
-      <tr><td colspan="5" style="text-align:center;color:#888;">Loading…</td></tr>
-    </tbody>
-  </table>
 
   <!-- ── Meta Pixel Consent Mode Reference ────────────────────────────── -->
   <h2>Meta Pixel Consent Mode — Enforcement Reference</h2>
@@ -546,51 +572,6 @@
   <script src="assets/test-helpers.js"></script>
 
   <script>
-    var COOKIE_META = {
-      '_fbp':         { cat: 'Marketing',  by: 'Meta Pixel — fbevents.js (Section A)' },
-      '_fbc':         { cat: 'Marketing',  by: 'Meta Pixel — fbclid= URL param landing' },
-      'th_capi_em':   { cat: 'Marketing',  by: 'Meta CAPI — hashed email (DUMMY)' },
-      'th_capi_fn':   { cat: 'Marketing',  by: 'Meta CAPI — hashed first name (DUMMY)' },
-      'th_capi_ln':   { cat: 'Marketing',  by: 'Meta CAPI — hashed last name (DUMMY)' },
-      'th_capi_ph':   { cat: 'Marketing',  by: 'Meta CAPI — hashed phone (DUMMY)' },
-      'user_prefs':   { cat: 'Functional', by: 'Inline script (dummy)' },
-      'session_id':   { cat: 'Functional', by: 'Inline script (dummy)' },
-      'marketing_id': { cat: 'Others',     by: 'Inline script (dummy)' },
-      '_uetsid':      { cat: 'Marketing',  by: 'Bing Ads UET' },
-      '_uetvid':      { cat: 'Marketing',  by: 'Bing Ads UET' },
-      'MUID':         { cat: 'Marketing',  by: 'Microsoft (via bat.js)' },
-    };
-
-    function getCookieMeta(name) {
-      if (COOKIE_META[name]) return COOKIE_META[name];
-      if (name.startsWith('_ga'))      return { cat: 'Analytics', by: 'Google Analytics' };
-      if (name.startsWith('_gcl'))     return { cat: 'Marketing', by: 'Google Ads / Conversion Linker' };
-      if (name.startsWith('th_capi_')) return { cat: 'Marketing', by: 'Meta CAPI (DUMMY)' };
-      return { cat: '—', by: '—' };
-    }
-
-    function refreshCookies() {
-      var raw = document.cookie.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
-      var tbody = document.getElementById('cookie-tbody');
-      if (raw.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">No cookies found for this origin.</td></tr>';
-      } else {
-        tbody.innerHTML = raw.map(function(c, i) {
-          var idx = c.indexOf('=');
-          var name = idx > -1 ? c.substring(0, idx) : c;
-          var val  = idx > -1 ? c.substring(idx + 1) : '';
-          var m    = getCookieMeta(name);
-          var shortVal = val.length > 40 ? val.substring(0, 40) + '…' : val;
-          return '<tr><td>' + (i + 1) + '</td>'
-               + '<td><code>' + name + '</code></td>'
-               + '<td style="font-size:12px;word-break:break-all;">' + shortVal + '</td>'
-               + '<td>' + m.cat + '</td>'
-               + '<td style="font-size:12px;">' + m.by + '</td></tr>';
-        }).join('');
-      }
-      document.getElementById('cookie-ts').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString();
-    }
-
     function simulateFbclid() {
       var url = window.location.href.split('?')[0] + '?fbclid=test-fb-click-123';
       window.location.href = url;
@@ -600,8 +581,6 @@
       window.history.replaceState({}, '', window.location.pathname);
     }
 
-    refreshCookies();
-    setInterval(refreshCookies, 3000);
   </script>
 
   <style>

@@ -12,22 +12,6 @@
     document.cookie = 'session_id=sess-abc123xyz; path=/; max-age=1800';
     console.log('Functional cookies set: user_prefs, session_id');
   </script>
-  <!-- Bing Ads UET (Tag ID: 343251198) — sets _uetsid, _uetvid, MUID on load -->
-  <script>
-    (function(w, d, t, u, o) {
-      w[u] = w[u] || [], o.ts = (new Date).getTime();
-      var n = d.createElement(t);
-      n.src = "https://bat.bing.net/bat.js?ti=" + o.ti + ("uetq" != u ? "&q=" + u : ""),
-      n.async = 1,
-      n.onload = n.onreadystatechange = function() {
-        var s = this.readyState;
-        s && "loaded" !== s && "complete" !== s ||
-        (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null)
-      };
-      var i = d.getElementsByTagName(t)[0];
-      i.parentNode.insertBefore(n, i);
-    })(window, document, "script", "uetq", { ti: "343251198", enableAutoSpaTracking: true });
-  </script>
   <!-- Fake marketing pixel (inline script that sets a cookie) -->
   <script>
     document.cookie = 'marketing_id=test-user-123; path=/; max-age=3600';
@@ -42,6 +26,8 @@
     <a href="iframe-page.html">Iframe Page</a>
     <a href="google-cookies.html">Google Cookies</a>
     <a href="meta-cookies.html">Meta Cookies</a>
+    <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="cookie-reader.html">Cookie Reader</a>
   </nav>
   <div class="warning">
     <strong>&#9888; No banner, no enforcement.</strong>
@@ -49,16 +35,15 @@
   </div>
   <h2>What loads on this page</h2>
   <p style="font-size:13px;color:#555;">
-    Dedicated cookie pages: <a href="google-cookies.html">Google Cookies</a> ·
-    <a href="meta-cookies.html">Meta Cookies</a>.
-    This page loads Bing UET and site functional cookies only.
+    Dedicated cookie pages:
+    <a href="google-cookies.html">Google Cookies</a> ·
+    <a href="meta-cookies.html">Meta Cookies</a> ·
+    <a href="bing-cookies.html">Bing Cookies</a> ·
+    <a href="cookie-reader.html">Cookie Reader</a>
   </p>
   <ul>
     <li><strong>[Functional]</strong> <code>user_prefs</code> — stores language &amp; theme preference (1 day) — <em>dummy</em></li>
     <li><strong>[Functional]</strong> <code>session_id</code> — maintains session state (30 min) — <em>dummy</em></li>
-    <li><strong>[Marketing]</strong> <code>_uetsid</code> — Bing Ads UET session ID (30 min) — <em>real</em></li>
-    <li><strong>[Marketing]</strong> <code>_uetvid</code> — Bing Ads UET visitor ID (180 days) — <em>real</em></li>
-    <li><strong>[Marketing]</strong> <code>MUID</code> — Microsoft User ID (1 year) — <em>real</em></li>
     <li><strong>[Marketing]</strong> <code>marketing_id</code> — fake marketing pixel (1 hour) — <em>dummy</em></li>
   </ul>
   <footer>
