@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Site — Adobe Cookies</title>
+  <meta name="google-adsense-account" content="ca-pub-7344776715655315">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7344776715655315"
+     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="assets/style.css">
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION A — Adobe ECID Service   [DUMMY — needs IMS Org ID]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • The Experience Cloud ID (ECID) Service assigns a unique Marketing
+      Cloud ID (MCID) that persists across all Adobe products.
+    • It sets AMCV_ (visitor ID, 24 months) and AMCVS_ (init flag, session).
+    • The OrgID suffix in the cookie name is unique per Adobe organisation.
+      Pattern: AMCV_{OrgID}@AdobeOrg and AMCVS_{OrgID}@AdobeOrg.
+  Why dummy here:
+    • A real ECID requires an Adobe IMS Org ID and the VisitorAPI.js library
+      loaded from assets.adobedtm.com or via Adobe Launch.
+    • The dummy OrgID TEST1234567890ABCD is a placeholder — replace with
+      your real OrgID once an Adobe Experience Cloud account is provisioned.
+    • See docs/adobe-cookie-setup.md for full account setup steps.
+  AMCV_ cookie value format:
+    MCMID|{38-digit-id}|MCAID|NONE|MCOPTOUT|NONE|vVersion|{version}
+  Cookies (Analytics / First-party):
+    AMCV_{OrgID}@AdobeOrg   Visitor ID (MCID)   24 months
+    AMCVS_{OrgID}@AdobeOrg  ECID init flag      Session
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+    // Dummy ECID cookies — OrgID is a placeholder (replace with real IMS Org ID)
+    var _adobeOrg = 'TEST1234567890ABCD@AdobeOrg';
+    document.cookie = 'AMCV_' + _adobeOrg + '=MCMID|12345678901234567890123456789012345678|MCAID|NONE|MCOPTOUT|NONE|vVersion|4.4; path=/; max-age=63072000';
+    document.cookie = 'AMCVS_' + _adobeOrg + '=1; path=/';
+    console.log('Analytics cookies set: AMCV_, AMCVS_ (Adobe ECID — DUMMY, OrgID: TEST1234567890ABCD)');
+  </script>
+  <!-- End Section A -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION B — Adobe Analytics   [DUMMY — needs Report Suite ID]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Adobe Analytics tracks page views, sessions, campaigns, and
+      conversion funnels. It uses AppMeasurement.js for data collection.
+    • s_cc and s_dur are always set. s_sq, s_vi, s_fid, s_ppv appear
+      depending on Analytics features enabled in the report suite.
+  Why dummy here:
+    • A real Adobe Analytics implementation requires a Report Suite ID
+      and AppMeasurement.js downloaded from Adobe Analytics Admin.
+    • See docs/adobe-cookie-setup.md for setup steps.
+  Cookies (Analytics / First-party):
+    s_cc     Cookie capability check flag       Session
+    s_dur    Session duration timestamp         Session
+    s_sq     Activity map / click data          Session
+    s_vi     Legacy visitor ID (2-year)         2 years
+    s_fid    Fallback visitor ID                5 years
+    s_ppv    Page scroll percentage             Session
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+    // Dummy Adobe Analytics cookies — correct formats, fabricated values
+    document.cookie = 's_cc=true; path=/';
+    document.cookie = 's_dur=' + Date.now() + '; path=/';
+    document.cookie = 's_sq=%5B%5D; path=/';
+    document.cookie = 's_vi=[CS]v1|abcdef01234567-12345678[CE]; path=/; max-age=63072000';
+    document.cookie = 's_fid=1A2B3C4D-5E6F-7890-ABCD-EF1234567890+ABCDEF; path=/; max-age=157680000';
+    document.cookie = 's_ppv=adobe-cookies%7C100%7C100%7C854; path=/';
+    console.log('Analytics cookies set: s_cc, s_dur, s_sq, s_vi, s_fid, s_ppv (Adobe Analytics — DUMMY)');
+  </script>
+  <!-- End Section B -->
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  SECTION C — Adobe Target   [DUMMY — needs Client Code]
+  ══════════════════════════════════════════════════════════════════════════
+  What it does:
+    • Adobe Target is an A/B testing and personalisation engine.
+    • It loads at.js which sets mbox (session + profile persistence)
+      and at_check (library availability check).
+    • mbox contains two identifiers: session ID (30 min rolling) and
+      PC ID (Profile Cache, 2 years) for persisting test assignments.
+  Why dummy here:
+    • A real Target implementation requires a Client Code and at.js
+      downloaded from Adobe Target Admin.
+    • See docs/adobe-cookie-setup.md for setup steps.
+  mbox cookie format:
+    session#{sessionId}#{expiry_unix}|PC#{pcId}#{expiry_unix}
+  Cookies (Functional / First-party):
+    mbox      Session + PC identifier    30 min (session) / 2 years (PC)
+    at_check  Target library check flag  Session
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+    // Dummy Adobe Target cookies — correct formats, fabricated values
+    var _now = Math.floor(Date.now() / 1000);
+    var _sessionExpiry = _now + 1800;
+    var _pcExpiry = _now + 63072000;
+    document.cookie = 'mbox=session#abcdef1234567890abcdef1234567890#' + _sessionExpiry + '|PC#a1b2c3d4-e5f6-7890-abcd-ef1234567890.26_14#' + _pcExpiry + '; path=/; max-age=63072000';
+    document.cookie = 'at_check=true; path=/';
+    console.log('Functional cookies set: mbox, at_check (Adobe Target — DUMMY)');
+  </script>
+  <!-- End Section C -->
+
+</head>
+<body>
+
+  <h1>Adobe Cookies — All-in-One Test Page</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="spa-page.html">SPA Page</a>
+    <a href="iframe-page.html">Iframe Page</a>
+    <a href="google-cookies.html">Google Cookies</a>
+    <a href="meta-cookies.html">Meta Cookies</a>
+    <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="adobe-cookies.html">Adobe Cookies</a>
+    <a href="cookie-reader.html">Cookie Reader</a>
+  </nav>
+
+  <div class="warning">
+    <strong>&#9888; All Adobe cookies on this page are dummies — no real Adobe account yet.</strong>
+    Cookie names, value formats, and categories are correct. Values use placeholder IDs.
+    See <code>docs/adobe-cookie-setup.md</code> for steps to make them real.
+    Open DevTools → Application → Cookies to inspect them in real time.
+  </div>
+
+  <!-- ── About Adobe Experience Cloud Cookies ──────────────────────────── -->
+  <h2>About Adobe Experience Cloud Cookies</h2>
+
+  <p>
+    <strong>Adobe Experience Cloud</strong> is a suite of enterprise marketing,
+    analytics, and personalisation products. Three products within the suite
+    set browser cookies on a website:
+  </p>
+  <p>
+    <strong>Adobe Experience Cloud ID Service (ECID)</strong> is the foundation
+    layer. It assigns a unique Marketing Cloud ID (MCID) that persists across all
+    Adobe products on the same domain. When any Adobe-instrumented page loads, ECID
+    creates a visitor identifier and shares it with Analytics, Target, and Audience
+    Manager so they can all recognise the same visitor. Without ECID, each Adobe
+    product would track visitors independently with no cross-product linkage. ECID
+    sets the <code>AMCV_</code> and <code>AMCVS_</code> cookies.
+  </p>
+  <p>
+    <strong>Adobe Analytics</strong> is Adobe's web analytics platform — comparable
+    to Google Analytics 4. It tracks page views, user journeys, campaign performance,
+    conversion funnels, and engagement metrics using server-side data collection
+    (the <code>/b/ss</code> endpoint) and client-side cookies for session and visitor
+    identification. Analytics uses <code>AppMeasurement.js</code> for data collection
+    and sets several <code>s_</code>-prefixed cookies.
+  </p>
+  <p>
+    <strong>Adobe Target</strong> is Adobe's A/B testing and personalisation engine.
+    It allows site owners to test multiple content variants and deliver personalised
+    experiences based on visitor segments. Target uses cookies to maintain the
+    visitor's session, track which test variants they've been assigned, and persist
+    personalisation context across page loads. It loads via <code>at.js</code>.
+  </p>
+  <p>
+    <strong>Adobe Opt-In Service</strong> is Adobe's centralised consent API —
+    unlike Google, Meta, and Bing which each have separate consent APIs, all Adobe
+    products are controlled through a single <code>adobe.optIn</code> interface.
+    A unique architectural advantage: when consent is initially denied, Adobe
+    <em>queues</em> all tracking calls in memory. When consent is later granted,
+    all queued page views and events replay automatically — zero data loss, unlike
+    Google/Meta/Bing which permanently lose pre-consent activity.
+  </p>
+
+  <h3>Four ways Adobe cookies get set on a website</h3>
+  <ol>
+    <li>
+      <strong>ECID VisitorAPI.js — first-party (foundation for all Adobe products):</strong>
+      Call <code>Visitor.getInstance("ORG_ID@AdobeOrg")</code>. Writes
+      <code>AMCV_</code> (24-month visitor ID) and <code>AMCVS_</code> (session flag).
+      Must load before Analytics and Target so they can read the shared visitor ID.
+    </li>
+    <li>
+      <strong>Adobe Analytics AppMeasurement.js — first-party:</strong>
+      Loads with a Report Suite ID. Sets <code>s_cc</code>, <code>s_dur</code>
+      on every page. Sets <code>s_vi</code> (legacy visitor ID) and <code>s_fid</code>
+      (fallback ID) when first-party visitor tracking is active. <code>s_sq</code>
+      and <code>s_ppv</code> appear when Activity Map / scroll tracking is enabled.
+    </li>
+    <li>
+      <strong>Adobe Target at.js — first-party:</strong>
+      Loads with a Client Code. Sets <code>mbox</code> (session + PC/profile cache
+      identifier, used to persist A/B test variant assignments) and
+      <code>at_check</code> (library availability check). No third-party cookies.
+    </li>
+    <li>
+      <strong>Adobe Launch / Experience Platform Tags (tag manager route):</strong>
+      Adobe's own tag manager loads a single container script
+      (<code>assets.adobedtm.com</code>). The container then fires ECID, Analytics,
+      and Target tags based on configured rules — similar to how GTM fires Google tags.
+    </li>
+  </ol>
+
+  <!-- ── Complete Adobe Cookie Reference Table ─────────────────────────── -->
+  <h2>Complete Adobe Cookie Reference</h2>
+  <table id="ref-table">
+    <thead>
+      <tr>
+        <th>Cookie</th>
+        <th>Category</th>
+        <th>Purpose</th>
+        <th>Type</th>
+        <th>Set By / Trigger</th>
+        <th>Expiry</th>
+        <th>Status on This Page</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>AMCV_{OrgID}@AdobeOrg</code></td>
+        <td>Analytics</td>
+        <td>Experience Cloud Visitor ID (MCID). Contains the unique visitor identifier used for cross-product identification. Also stores Audience Manager location hint, blob, opt-out flag, and synced partners.</td>
+        <td>First-party</td>
+        <td>Adobe ECID VisitorAPI.js — page load</td>
+        <td>24 months</td>
+        <td class="dummy">Dummy — ECID requires IMS Org ID + VisitorAPI.js. OrgID placeholder: <code>TEST1234567890ABCD</code></td>
+      </tr>
+      <tr>
+        <td><code>AMCVS_{OrgID}@AdobeOrg</code></td>
+        <td>Analytics</td>
+        <td>ECID initialisation status flag. Set to "1" when the ECID library has successfully initialised. Used as a session-level indicator that ECID is active.</td>
+        <td>First-party</td>
+        <td>Adobe ECID VisitorAPI.js — page load</td>
+        <td>Session</td>
+        <td class="dummy">Dummy — same OrgID dependency as AMCV_</td>
+      </tr>
+      <tr>
+        <td><code>s_cc</code></td>
+        <td>Analytics</td>
+        <td>Cookie capability check. Set to "true" to verify the browser accepts cookies before Analytics attempts to set tracking cookies. If missing, Analytics knows cookies are blocked.</td>
+        <td>First-party</td>
+        <td>Adobe Analytics AppMeasurement.js — page load</td>
+        <td>Session</td>
+        <td class="dummy">Dummy — Analytics requires Report Suite ID + AppMeasurement.js</td>
+      </tr>
+      <tr>
+        <td><code>s_dur</code></td>
+        <td>Analytics</td>
+        <td>Session duration tracker. Stores a millisecond timestamp used to calculate time-on-site and engagement metrics.</td>
+        <td>First-party</td>
+        <td>Adobe Analytics AppMeasurement.js — page load</td>
+        <td>Session</td>
+        <td class="dummy">Dummy — Analytics requires Report Suite ID + AppMeasurement.js</td>
+      </tr>
+      <tr>
+        <td><code>s_sq</code></td>
+        <td>Analytics</td>
+        <td>Activity Map click tracking. Stores serialised data about the last link clicked. Used by Adobe Analytics Activity Map overlay feature.</td>
+        <td>First-party</td>
+        <td>Adobe Analytics AppMeasurement.js — on link click (Activity Map enabled)</td>
+        <td>Session</td>
+        <td class="dummy">Dummy — Activity Map must be enabled in report suite config</td>
+      </tr>
+      <tr>
+        <td><code>s_vi</code></td>
+        <td>Analytics</td>
+        <td>Legacy visitor ID. A 2-year persistent identifier used by older Adobe Analytics implementations. Newer implementations rely on AMCV_ (ECID) instead, but s_vi may still appear alongside it.</td>
+        <td>First-party</td>
+        <td>Adobe Analytics AppMeasurement.js — first visit</td>
+        <td>2 years</td>
+        <td class="dummy">Dummy — legacy Analytics visitor ID</td>
+      </tr>
+      <tr>
+        <td><code>s_fid</code></td>
+        <td>Analytics</td>
+        <td>Fallback visitor ID. Set when the primary visitor ID (s_vi or AMCV_) cannot be created (e.g., third-party cookie restrictions). 5-year persistent alternative.</td>
+        <td>First-party</td>
+        <td>Adobe Analytics AppMeasurement.js — when primary ID fails</td>
+        <td>5 years</td>
+        <td class="dummy">Dummy — fallback ID, correct format</td>
+      </tr>
+      <tr>
+        <td><code>s_ppv</code></td>
+        <td>Analytics</td>
+        <td>Page scroll percentage. Tracks what percentage of the page the visitor scrolled. Format: pageName|scrollPct|topPct|pageHeight.</td>
+        <td>First-party</td>
+        <td>Adobe Analytics AppMeasurement.js — scroll tracking enabled</td>
+        <td>Session</td>
+        <td class="dummy">Dummy — scroll tracking must be enabled in AppMeasurement config</td>
+      </tr>
+      <tr>
+        <td><code>mbox</code></td>
+        <td>Functional</td>
+        <td>Adobe Target session and profile cache (PC) identifier. Contains session ID (30 min, maintains A/B variant assignment within a visit) and PC ID (2 years, persists personalisation profile across visits). Format: session#{id}#{expiry}|PC#{id}#{expiry}.</td>
+        <td>First-party</td>
+        <td>Adobe Target at.js — page load</td>
+        <td>Session ID: 30 min / PC ID: 2 years</td>
+        <td class="dummy">Dummy — Target requires Client Code + at.js</td>
+      </tr>
+      <tr>
+        <td><code>at_check</code></td>
+        <td>Functional</td>
+        <td>Adobe Target availability check. Set to "true" to confirm the Target library loaded and browser localStorage is accessible. Used for client-side feature detection only.</td>
+        <td>First-party</td>
+        <td>Adobe Target at.js — page load</td>
+        <td>Session</td>
+        <td class="dummy">Dummy — Target requires Client Code + at.js</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;">
+    <strong>Note:</strong> <code>AMCV_</code> and <code>AMCVS_</code> cookie names contain
+    a dynamic OrgID suffix — the pattern is <code>AMCV_{OrgID}@AdobeOrg</code> where
+    the OrgID is unique to each Adobe Experience Cloud organisation. The scanner uses
+    regex matching (<code>/^AMCV_.*@AdobeOrg$/</code>) to identify them regardless of
+    the specific OrgID.
+  </p>
+
+  <!-- ── Cookie Coverage Table ─────────────────────────────────────────── -->
+  <h2>Cookie Coverage — What This Page Loads</h2>
+  <table id="coverage-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Mechanism</th>
+        <th>Cookie(s) Set</th>
+        <th>Category</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — Adobe ECID</td>
+        <td>Inline <code>document.cookie</code> (dummy — real: VisitorAPI.js)</td>
+        <td><code>AMCV_TEST1234567890ABCD@AdobeOrg</code>, <code>AMCVS_TEST1234567890ABCD@AdobeOrg</code></td>
+        <td>Analytics · First-party</td>
+        <td class="dummy">Dummy — needs IMS Org ID + VisitorAPI.js. See <code>docs/adobe-cookie-setup.md</code></td>
+      </tr>
+      <tr>
+        <td>B — Adobe Analytics</td>
+        <td>Inline <code>document.cookie</code> (dummy — real: AppMeasurement.js)</td>
+        <td><code>s_cc</code>, <code>s_dur</code>, <code>s_sq</code>, <code>s_vi</code>, <code>s_fid</code>, <code>s_ppv</code></td>
+        <td>Analytics · First-party</td>
+        <td class="dummy">Dummy — needs Report Suite ID + AppMeasurement.js. See <code>docs/adobe-cookie-setup.md</code></td>
+      </tr>
+      <tr>
+        <td>C — Adobe Target</td>
+        <td>Inline <code>document.cookie</code> (dummy — real: at.js)</td>
+        <td><code>mbox</code>, <code>at_check</code></td>
+        <td>Functional · First-party</td>
+        <td class="dummy">Dummy — needs Client Code + at.js. See <code>docs/adobe-cookie-setup.md</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── What Loads and What It Sets ──────────────────────────────────── -->
+  <h2>What Loads and What It Sets</h2>
+  <table id="script-map-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Script / URL / Mechanism</th>
+        <th>Cookie(s) Written</th>
+        <th>Written By</th>
+        <th>Domain</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A — ECID (real)</td>
+        <td><code>https://assets.adobedtm.com/...</code> or <code>VisitorAPI.js</code> via Adobe Launch</td>
+        <td><code>AMCV_{OrgID}@AdobeOrg</code>, <code>AMCVS_{OrgID}@AdobeOrg</code></td>
+        <td><code>document.cookie</code> via VisitorAPI.js SDK</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>A — ECID (this page)</td>
+        <td>Inline <code>document.cookie</code></td>
+        <td><code>AMCV_TEST1234567890ABCD@AdobeOrg</code>, <code>AMCVS_TEST1234567890ABCD@AdobeOrg</code></td>
+        <td>Direct <code>document.cookie</code> write (DUMMY — placeholder OrgID)</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>B — Analytics (real)</td>
+        <td><code>AppMeasurement.js</code> loaded with Report Suite ID</td>
+        <td><code>s_cc</code>, <code>s_dur</code>, <code>s_vi</code>, <code>s_fid</code>, <code>s_sq</code>, <code>s_ppv</code></td>
+        <td><code>document.cookie</code> via AppMeasurement.js SDK</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>B — Analytics (this page)</td>
+        <td>Inline <code>document.cookie</code></td>
+        <td><code>s_cc</code>, <code>s_dur</code>, <code>s_sq</code>, <code>s_vi</code>, <code>s_fid</code>, <code>s_ppv</code></td>
+        <td>Direct <code>document.cookie</code> write (DUMMY)</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>C — Target (real)</td>
+        <td><code>at.js</code> loaded with Client Code</td>
+        <td><code>mbox</code>, <code>at_check</code></td>
+        <td><code>document.cookie</code> via at.js SDK</td>
+        <td>First-party (this domain)</td>
+      </tr>
+      <tr>
+        <td>C — Target (this page)</td>
+        <td>Inline <code>document.cookie</code></td>
+        <td><code>mbox</code>, <code>at_check</code></td>
+        <td>Direct <code>document.cookie</code> write (DUMMY)</td>
+        <td>First-party (this domain)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Debug Helpers ─────────────────────────────────────────────────── -->
+  <h2>Debug Helpers</h2>
+  <ul>
+    <li>
+      <strong>Check ECID state (real ECID only):</strong> run
+      <code>Visitor.getInstance("YOUR_ORG_ID@AdobeOrg").getMarketingCloudVisitorID()</code>
+      in the browser console — returns the MCID stored in the AMCV_ cookie.
+    </li>
+    <li>
+      <strong>Check Opt-In consent state (real ECID only):</strong> run
+      <code>adobe.optIn.fetchPermissions(function(p){console.log(p)}, true)</code>
+      — returns the current consent state for all Adobe categories.
+    </li>
+    <li>
+      <strong>Check Target mbox state (real at.js only):</strong> run
+      <code>window.adobe.target.getOffer({...})</code> or inspect
+      <code>window.mboxFactories</code> in the console.
+    </li>
+    <li>
+      <strong>Adobe Experience Cloud Debugger:</strong> install the
+      <a href="https://chromewebstore.google.com/detail/adobe-experience-platform/bfnnokhpnncpkdmbokanobigaccjkpob" target="_blank">Adobe Experience Platform Debugger Chrome extension</a>
+      to validate ECID, Analytics, and Target tag firing on the real implementation.
+    </li>
+    <li>
+      <strong>View this page's dummy cookies:</strong> open
+      <a href="cookie-reader.html">Cookie Reader</a> — all Adobe cookies appear
+      with correct category labels. Use the Analytics and Functional filters.
+    </li>
+  </ul>
+
+  <!-- ── Adobe Opt-In Service Consent Reference ────────────────────────── -->
+  <h2>Adobe Opt-In Service — Enforcement Reference</h2>
+  <p>
+    Adobe has a single centralised consent API called the <strong>Opt-In Service</strong>
+    (<code>adobe.optIn</code>), bundled with the ECID library. Unlike Google, Meta, and
+    Bing which each have independent consent APIs, all Adobe products are controlled
+    through this one interface. This is configured via the <code>Visitor.getInstance()</code>
+    call with <code>doesOptInApply: true</code>.
+  </p>
+  <p>
+    <strong>Key architectural advantage — data queuing:</strong> When consent is initially
+    denied, Adobe queues all Analytics page views and Target calls in memory. When consent
+    is later granted, all queued calls replay — unlike Google, Meta, and Bing which
+    permanently lose pre-consent page views.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Call</th>
+        <th>Controls</th>
+        <th>Effect</th>
+        <th>Cookies Gated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>preOptInApprovals: { aa: false, ecid: false }</code></td>
+        <td>Analytics + ECID — default denied</td>
+        <td>No AMCV_ cookie written; Analytics beacons queued, not sent</td>
+        <td><code>AMCV_*</code>, <code>AMCVS_*</code>, <code>s_cc</code>, <code>s_dur</code>, <code>s_vi</code>, <code>s_fid</code></td>
+      </tr>
+      <tr>
+        <td><code>adobe.optIn.approve([ANALYTICS, ECID], true)</code></td>
+        <td>Analytics + ECID — grant</td>
+        <td>ECID writes AMCV_; Analytics activates and replays all queued page views</td>
+        <td>All above unlocked + queued data replayed</td>
+      </tr>
+      <tr>
+        <td><code>preOptInApprovals: { target: false }</code></td>
+        <td>Target — default denied</td>
+        <td>No mbox cookie; Target personalisation calls queued</td>
+        <td><code>mbox</code>, <code>at_check</code></td>
+      </tr>
+      <tr>
+        <td><code>adobe.optIn.approve([TARGET], true)</code></td>
+        <td>Target — grant</td>
+        <td>Target activates; test variants assigned; mbox written</td>
+        <td>mbox unlocked</td>
+      </tr>
+      <tr>
+        <td><code>adobe.optIn.deny([ANALYTICS, ECID], true)</code></td>
+        <td>Analytics + ECID — revoke</td>
+        <td>Future cookies blocked; existing cookies must be deleted separately (Klaro handles this via cookie pattern <code>/^AMCV_/</code>, <code>/^s_/</code>)</td>
+        <td>Blocked going forward</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;">
+    <strong>Category mapping for enforcement:</strong>
+    Analytics toggle → controls <code>aa</code> (Adobe Analytics) + <code>ecid</code>
+    (ECID — required for Analytics to function) together.
+    Functional toggle → controls <code>target</code> (Adobe Target — A/B testing,
+    classified as Functional not Marketing). The <code>aam</code> (Audience Manager)
+    category is not mapped until AAM cookies are confirmed on customer sites.
+  </p>
+
+  <footer>
+    Cookie Consent Test Site — Developer testing environment only.<br>
+    Adobe Cookies page · ECID OrgID placeholder: TEST1234567890ABCD · All cookies are DUMMY
+  </footer>
+
+  <script src="assets/test-helpers.js"></script>
+
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #eaf2fb; }
+    tr:nth-child(even) td { background: #fafafa; }
+    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+    button { margin: 4px 6px 4px 0; padding: 6px 12px; cursor: pointer;
+             background: #2e86c1; color: #fff; border: none; border-radius: 4px; font-size: 13px; }
+    button:hover { background: #1b6fa8; }
+    a { color: #2e86c1; }
+    .real    { color: #1a7a2e; font-weight: bold; }
+    .dummy   { color: #7a4f00; }
+    .scenario { color: #8a6d00; }
+    #ref-table .real     { background: #eaffea; }
+    #ref-table .dummy    { background: #fdf0e0; }
+    #ref-table .scenario { background: #fff8e1; }
+    #coverage-table .real  { background: #eaffea; }
+    #coverage-table .dummy { background: #fdf0e0; }
+  </style>
+</body>
+</html>

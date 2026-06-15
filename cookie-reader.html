@@ -20,6 +20,7 @@
     <a href="google-cookies.html">Google Cookies</a>
     <a href="meta-cookies.html">Meta Cookies</a>
     <a href="bing-cookies.html">Bing Cookies</a>
+    <a href="adobe-cookies.html">Adobe Cookies</a>
     <a href="cookie-reader.html">Cookie Reader</a>
   </nav>
 
@@ -112,6 +113,16 @@
       <tr><td><code>marketing_id</code></td><td>Others</td><td>Fake marketing pixel (dummy)</td><td>1 hour</td></tr>
       <tr><td><code>campaign_id</code></td><td>Marketing</td><td>SPA page — campaign (dummy)</td><td>1 day</td></tr>
       <tr><td><code>ab_variant</code></td><td>Marketing</td><td>SPA page — A/B variant (dummy)</td><td>1 day</td></tr>
+      <tr><td><code>AMCV_*@AdobeOrg</code></td><td>Analytics</td><td>Adobe ECID — Experience Cloud Visitor ID (MCID)</td><td>24 months</td></tr>
+      <tr><td><code>AMCVS_*@AdobeOrg</code></td><td>Analytics</td><td>Adobe ECID — initialisation flag</td><td>Session</td></tr>
+      <tr><td><code>s_cc</code></td><td>Analytics</td><td>Adobe Analytics — cookie check flag</td><td>Session</td></tr>
+      <tr><td><code>s_dur</code></td><td>Analytics</td><td>Adobe Analytics — session duration</td><td>Session</td></tr>
+      <tr><td><code>s_sq</code></td><td>Analytics</td><td>Adobe Analytics — Activity Map click data</td><td>Session</td></tr>
+      <tr><td><code>s_vi</code></td><td>Analytics</td><td>Adobe Analytics — legacy visitor ID</td><td>2 years</td></tr>
+      <tr><td><code>s_fid</code></td><td>Analytics</td><td>Adobe Analytics — fallback visitor ID</td><td>5 years</td></tr>
+      <tr><td><code>s_ppv</code></td><td>Analytics</td><td>Adobe Analytics — page scroll percentage</td><td>Session</td></tr>
+      <tr><td><code>mbox</code></td><td>Functional</td><td>Adobe Target — session + profile cache ID</td><td>30 min / 2 years</td></tr>
+      <tr><td><code>at_check</code></td><td>Functional</td><td>Adobe Target — library check flag</td><td>Session</td></tr>
     </tbody>
   </table>
 
@@ -144,6 +155,14 @@
       'marketing_id':     { cat: 'Others',     by: 'Site inline script (DUMMY)' },
       'campaign_id':      { cat: 'Marketing',  by: 'SPA page — campaign cookie (DUMMY)' },
       'ab_variant':       { cat: 'Marketing',  by: 'SPA page — A/B test variant (DUMMY)' },
+      's_cc':             { cat: 'Analytics',  by: 'Adobe Analytics — cookie check flag' },
+      's_dur':            { cat: 'Analytics',  by: 'Adobe Analytics — session duration' },
+      's_sq':             { cat: 'Analytics',  by: 'Adobe Analytics — Activity Map click data' },
+      's_vi':             { cat: 'Analytics',  by: 'Adobe Analytics — legacy visitor ID' },
+      's_fid':            { cat: 'Analytics',  by: 'Adobe Analytics — fallback visitor ID' },
+      's_ppv':            { cat: 'Analytics',  by: 'Adobe Analytics — page scroll percentage' },
+      'mbox':             { cat: 'Functional', by: 'Adobe Target — session + profile cache ID' },
+      'at_check':         { cat: 'Functional', by: 'Adobe Target — library availability check' },
     };
 
     function getCookieMeta(name) {
@@ -152,6 +171,9 @@
       if (name.startsWith('_gcl_'))     return { cat: 'Marketing', by: 'Google Ads / Conversion Linker' };
       if (name.startsWith('th_capi_'))  return { cat: 'Marketing', by: 'Meta CAPI (DUMMY)' };
       if (name.startsWith('_cl'))       return { cat: 'Analytics', by: 'Microsoft Clarity' };
+      if (/^AMCV_.*@AdobeOrg$/.test(name))  return { cat: 'Analytics', by: 'Adobe ECID — Experience Cloud Visitor ID' };
+      if (/^AMCVS_.*@AdobeOrg$/.test(name)) return { cat: 'Analytics', by: 'Adobe ECID — initialisation flag' };
+      if (name.startsWith('s_'))        return { cat: 'Analytics', by: 'Adobe Analytics' };
       return { cat: 'Unknown', by: '— unrecognised cookie' };
     }
 
