@@ -27,6 +27,12 @@
   ══════════════════════════════════════════════════════════════════════════
   -->
   <script>
+    // _fbp: inline fallback — real SDK overwrites; dummy persists if SDK blocked.
+    document.cookie = '_fbp=fb.1.' + Date.now() + '.' + Math.floor(Math.random() * 1e10) + '; path=/; max-age=7776000';
+    // _fbc: always present as dummy (real value requires ?fbclid= landing URL).
+    document.cookie = '_fbc=fb.1.' + Date.now() + '.IwAR0test-dummy-click-123; path=/; max-age=7776000';
+  </script>
+  <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -38,6 +44,9 @@
     fbq('init', '1995676894381395');
     fbq('track', 'PageView');
   </script>
+  <!-- Pixel img fires even when fbevents.js is blocked — triggers fr on facebook.com -->
+  <img height="1" width="1" style="display:none;position:absolute"
+    src="https://www.facebook.com/tr?id=1995676894381395&ev=PageView">
   <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1995676894381395&ev=PageView&noscript=1"/></noscript>
   <!-- End Section A -->
@@ -120,6 +129,8 @@
     <a href="bing-cookies.html">Bing Cookies</a>
     <a href="adobe-cookies.html">Adobe Cookies</a>
     <a href="cookie-reader.html">Cookie Reader</a>
+    <a href="all-trackers.html">All Trackers</a>
+    <a href="enforcement-test.html">Enforcement ✓</a>
   </nav>
 
   <div class="warning">
@@ -479,8 +490,8 @@
   <div style="margin:16px 0;padding:16px;background:#f0f4f8;border-radius:4px;border-left:4px solid #3b5998;">
     <p style="margin:0 0 10px;font-size:13px;color:#555;">Facebook Like button — loads from facebook.com and triggers third-party cookies:</p>
     <iframe
-      src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2F&width=450&layout=standard&action=like&size=large&share=true&height=35"
-      width="450" height="35"
+      src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook&tabs=&width=400&height=130&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+      width="400" height="130"
       style="border:none;overflow:hidden;display:block;"
       scrolling="no" frameborder="0" allowfullscreen="true"
       allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">

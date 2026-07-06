@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enforcement Test — Cookie Consent Test Site</title>
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  STEP 0 — Dynamic enforcement script loader (dev testing only)
+  ══════════════════════════════════════════════════════════════════════════
+  Reads ?cmid=XXX&backend=http://localhost:8080 from the URL.
+  Makes a synchronous XHR to GET /enforcement/v1/generateEnforcementScript
+  and injects the returned script BEFORE any tracking scripts below fire.
+  In production you would paste the <script> tag here directly instead.
+  NOTE: Run this page via http:// (not https://) to avoid mixed-content
+  errors when the backend is on localhost.
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+  (function () {
+    var params  = new URLSearchParams(location.search);
+    var cmid    = params.get('cmid')    || localStorage.getItem('ccm_cmid');
+    var backend = (params.get('backend') || localStorage.getItem('ccm_backend') || 'http://localhost:8080').replace(/\/$/, '');
+    window._ccm = { cmid: cmid, backend: backend, loaded: false, error: null };
+    if (!cmid) return;
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', backend + '/enforcement/v1/generateEnforcementScript?consentManagerId=' + encodeURIComponent(cmid), false);
+      xhr.send(null);
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+        var tag  = data && data.response && data.response.scriptTag;
+        if (tag) {
+          var m = tag.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+          if (m && m[1]) {
+            var s = document.createElement('script');
+            s.textContent = m[1];
+            document.head.appendChild(s);
+            window._ccm.loaded = true;
+          }
+        } else {
+          window._ccm.error = 'scriptTag missing in response';
+        }
+      } else {
+        window._ccm.error = 'HTTP ' + xhr.status + ' from backend';
+      }
+    } catch (e) {
+      window._ccm.error = e.message;
+    }
+  })();
+  </script>
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  GOOGLE — GTM-N8M7CRQR → GA4 (G-89RWJTCPLZ) + Conversion Linker
+  ══════════════════════════════════════════════════════════════════════════
+  NOT blocked with type="text/plain".
+  The enforcement script sets Google Consent Mode defaults
+  (ad_storage / analytics_storage: denied) BEFORE this script fires.
+  GA4 runs in cookieless mode until consent is granted, then the
+  enforcement script calls gtag('consent','update') to upgrade it.
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];
+  w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  var f=d.getElementsByTagName(s)[0],j=d.createElement(s),
+  dl=l!='dataLayer'?'&l='+l:'';j.async=true;
+  j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+  f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-N8M7CRQR');
+  </script>
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  META PIXEL — Pixel ID: 1995676894381395
+  ══════════════════════════════════════════════════════════════════════════
+  type="text/plain" = full Klaro block. Script will not execute until
+  Klaro changes the type to "application/javascript" on marketing consent.
+  data-name must match the service name in the enforcement script's
+  services array — check the "Services Detected" panel below.
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script type="text/plain" data-type="application/javascript" data-name="facebook-pixel">
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+  (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init','1995676894381395');
+  fbq('track','PageView');
+  </script>
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  BING UET — Tag ID: 343251198
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script type="text/plain" data-type="application/javascript" data-name="bing-ads">
+  (function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[];
+  f=function(){var o={ti:'343251198',enableAutoSpaTracking:true};
+  o.q=w[u];w[u]=new UET(o);w[u].push('pageLoad')};
+  n=d.createElement(t);n.src=r;n.async=1;
+  n.onload=n.onreadystatechange=function(){
+    var s=this.readyState;s&&s!=='loaded'&&s!=='complete'||(f(),n.onload=n.onreadystatechange=null)
+  };i=d.getElementsByTagName(t)[0];i.parentNode.insertBefore(n,i)
+  })(window,document,'script','//bat.bing.net/bat.js','uetq');
+  </script>
+
+  <!--
+  ══════════════════════════════════════════════════════════════════════════
+  MICROSOFT CLARITY — Tag: wy0xa34b85
+  ══════════════════════════════════════════════════════════════════════════
+  -->
+  <script type="text/plain" data-type="application/javascript" data-name="microsoft-clarity">
+  (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)}
+  )(window,document,'clarity','script','wy0xa34b85');
+  </script>
+
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .ccm-panel { border:1px solid #2e86c1; border-radius:6px; padding:16px; margin:16px 0; background:#f0f7ff; }
+    .ccm-panel h3 { margin:0 0 12px; color:#1b4f72; font-size:15px; }
+    .ccm-setup label { display:block; font-size:13px; font-weight:bold; margin-top:8px; }
+    .ccm-setup input { width:100%; padding:8px; margin:4px 0 2px; border:1px solid #bbb; border-radius:4px; font-size:14px; }
+    .btn { display:inline-block; padding:8px 16px; border:none; border-radius:4px; cursor:pointer; font-size:14px; margin:6px 4px 0 0; }
+    .btn-primary { background:#2e86c1; color:#fff; }
+    .btn-warn { background:#e74c3c; color:#fff; }
+    .btn-secondary { background:#7f8c8d; color:#fff; }
+    .status-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+    .status-box { background:#fff; border:1px solid #d5e8f5; border-radius:4px; padding:12px; }
+    .status-box h4 { margin:0 0 8px; font-size:12px; color:#2e86c1; text-transform:uppercase; letter-spacing:.5px; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold; margin:2px; }
+    .pill-green { background:#d5f5e3; color:#1e8449; }
+    .pill-red { background:#fdedec; color:#c0392b; }
+    .pill-grey { background:#eee; color:#555; }
+    .pill-orange { background:#fef9e7; color:#b7770d; border:1px solid #f39c12; }
+    .checklist { padding-left:0; list-style:none; }
+    .checklist li { padding:7px 4px; border-bottom:1px solid #eee; font-size:13px; }
+    .checklist li:last-child { border-bottom:none; }
+    .checklist input[type=checkbox] { margin-right:8px; cursor:pointer; }
+    .sig-line { margin:4px 0; font-size:12px; font-family:monospace; word-break:break-all; }
+    table.ct { width:100%; border-collapse:collapse; font-size:12px; margin-top:4px; }
+    table.ct th { background:#eaf4fb; padding:4px 8px; text-align:left; }
+    table.ct td { padding:4px 8px; border-bottom:1px solid #eee; }
+    .ok { color:#1e8449; font-weight:bold; }
+    .err { color:#c0392b; font-weight:bold; }
+    @media(max-width:600px){ .status-grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8M7CRQR"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<h1>Enforcement Test Page</h1>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="google-cookies.html">Google</a>
+  <a href="meta-cookies.html">Meta</a>
+  <a href="bing-cookies.html">Bing</a>
+  <a href="adobe-cookies.html">Adobe</a>
+  <a href="iframe-page.html">Iframe</a>
+  <a href="cookie-reader.html">Cookie Reader</a>
+  <a href="all-trackers.html">All Trackers</a>
+    <a href="enforcement-test.html"><strong>Enforcement ✓</strong></a>
+</nav>
+
+<!-- ── SETUP PANEL ──────────────────────────────────────────────────── -->
+<div class="ccm-panel ccm-setup" id="setup-panel">
+  <h3>⚙ Setup — Connect to Local Backend</h3>
+  <label>Backend URL</label>
+  <input id="inp-backend" type="url" placeholder="http://localhost:8080" value="http://localhost:8080">
+  <label>Consent Manager ID</label>
+  <input id="inp-cmid" type="text" placeholder="e.g. 64a3f1c8b2e3d40012ab1234">
+  <div style="margin-top:10px">
+    <button class="btn btn-primary" onclick="applySetup()">Load Enforcement Script &amp; Reload</button>
+    <button class="btn btn-secondary" onclick="clearSetup()">Clear Setup</button>
+  </div>
+  <p style="font-size:12px;color:#666;margin:10px 0 0">
+    The page reloads with <code>?cmid=&hellip;&amp;backend=&hellip;</code> in the URL.
+    The enforcement script is fetched synchronously from the backend so Klaro is
+    active before the tracking scripts below it fire.
+    <strong>Access this page over http:// (not https://)</strong> when the backend
+    is on localhost to avoid mixed-content errors.
+  </p>
+</div>
+
+<!-- ── ENFORCEMENT STATUS ───────────────────────────────────────────── -->
+<div class="ccm-panel" id="status-panel" style="display:none">
+  <h3>Enforcement Script Status</h3>
+  <div id="script-status"></div>
+  <div style="margin-top:10px">
+    <button class="btn btn-primary"    onclick="openBanner()">Re-open Consent Banner</button>
+    <button class="btn btn-warn"       onclick="resetAll()">Reset All Consent + Cookies</button>
+    <button class="btn btn-secondary"  onclick="refreshDashboard()">↻ Refresh Dashboard</button>
+  </div>
+</div>
+
+<!-- ── LIVE DASHBOARD ───────────────────────────────────────────────── -->
+<div id="dashboard" style="display:none">
+  <h2>Live Status Dashboard <small style="font-size:13px;color:#888">(auto-refreshes every 3 s)</small></h2>
+  <div class="status-grid">
+    <div class="status-box">
+      <h4>Klaro Consent State</h4>
+      <div id="dash-consent">—</div>
+    </div>
+    <div class="status-box">
+      <h4>Services in Enforcement Script</h4>
+      <div id="dash-services">—</div>
+    </div>
+    <div class="status-box">
+      <h4>Platform Signals</h4>
+      <div id="dash-signals">—</div>
+    </div>
+    <div class="status-box">
+      <h4>Cookies in Browser</h4>
+      <div id="dash-cookies">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEST CHECKLIST ──────────────────────────────────────────────── -->
+<h2>Test Checklist</h2>
+<ul class="checklist">
+  <li><input type="checkbox"> <strong>E1</strong> &nbsp; First visit — Klaro banner appears automatically (no prior consent in localStorage)</li>
+  <li><input type="checkbox"> <strong>E2</strong> &nbsp; <em>Decline All</em> — no analytics/marketing cookies set; dashboard shows all services rejected</li>
+  <li><input type="checkbox"> <strong>E3</strong> &nbsp; Google after decline — Platform Signals shows <code>analytics_storage: denied</code>, <code>ad_storage: denied</code></li>
+  <li><input type="checkbox"> <strong>E4</strong> &nbsp; Meta after decline — fbq not loaded (blocked); or <code>fbq queue: consent revoke</code></li>
+  <li><input type="checkbox"> <strong>E5</strong> &nbsp; Bing after decline — uetq not loaded (blocked); or <code>convConsentMode: false</code></li>
+  <li><input type="checkbox"> <strong>E6</strong> &nbsp; Clarity after decline — <code>window.clarity</code> is undefined (script fully blocked)</li>
+  <li><input type="checkbox"> <strong>E7</strong> &nbsp; <em>Accept All</em> — <code>_ga</code>, <code>_gcl_au</code>, <code>_fbp</code>, <code>_uetsid</code>/<code>_uetvid</code>, <code>_clck</code>/<code>_clsk</code> all appear in Cookies panel</li>
+  <li><input type="checkbox"> <strong>E8</strong> &nbsp; Google after accept — <code>analytics_storage: granted</code>, <code>ad_storage: granted</code> in dataLayer</li>
+  <li><input type="checkbox"> <strong>E9</strong> &nbsp; Meta after accept — fbq loaded, <code>fbq('consent','grant')</code> called, PageView fired</li>
+  <li><input type="checkbox"> <strong>E10</strong> &nbsp; Bing after accept — <code>convConsentMode: true</code> in uetq</li>
+  <li><input type="checkbox"> <strong>E11</strong> &nbsp; Clarity after accept — <code>window.clarity</code> is a function</li>
+  <li><input type="checkbox"> <strong>E12</strong> &nbsp; Partial — accept Analytics only → <code>_ga</code> set; <code>_fbp</code> and <code>_uetsid</code> absent</li>
+  <li><input type="checkbox"> <strong>E13</strong> &nbsp; Revisit without reset — no banner (consent persisted in localStorage)</li>
+  <li><input type="checkbox"> <strong>E14</strong> &nbsp; Reset All → reload → banner reappears (E1 repeated)</li>
+  <li><input type="checkbox"> <strong>E15</strong> &nbsp; Manual API add: use POST /addCookies to add a custom cookie → delete consent manager from DB → rescan → manual cookie still present (not overwritten)</li>
+</ul>
+
+<!-- ── PLATFORM REFERENCE ──────────────────────────────────────────── -->
+<h2>Platform Blocking Reference</h2>
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+  <thead>
+    <tr style="background:#eaf4fb">
+      <th style="padding:7px 10px;text-align:left">Platform</th>
+      <th style="padding:7px 10px;text-align:left">Method on this page</th>
+      <th style="padding:7px 10px;text-align:left">Klaro <code>data-name</code></th>
+      <th style="padding:7px 10px;text-align:left">Consent API called by enforcement script</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:1px solid #eee">
+      <td style="padding:7px 10px">Google GTM / GA4</td>
+      <td style="padding:7px 10px">Google Consent Mode default deny (cookieless mode)</td>
+      <td style="padding:7px 10px"><code>google-tag-manager</code></td>
+      <td style="padding:7px 10px"><code>gtag('consent','update',{…})</code></td>
+    </tr>
+    <tr style="border-bottom:1px solid #eee">
+      <td style="padding:7px 10px">Meta Pixel</td>
+      <td style="padding:7px 10px"><code>type="text/plain"</code> full block</td>
+      <td style="padding:7px 10px"><code>facebook-pixel</code></td>
+      <td style="padding:7px 10px"><code>fbq('consent','grant'/'revoke')</code></td>
+    </tr>
+    <tr style="border-bottom:1px solid #eee">
+      <td style="padding:7px 10px">Bing UET</td>
+      <td style="padding:7px 10px"><code>type="text/plain"</code> full block</td>
+      <td style="padding:7px 10px"><code>bing-ads</code></td>
+      <td style="padding:7px 10px"><code>uetq.push('set',{convConsentMode:true})</code></td>
+    </tr>
+    <tr>
+      <td style="padding:7px 10px">Microsoft Clarity</td>
+      <td style="padding:7px 10px"><code>type="text/plain"</code> full block</td>
+      <td style="padding:7px 10px"><code>microsoft-clarity</code></td>
+      <td style="padding:7px 10px">— (script-level block only)</td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size:12px;color:#666;margin-top:6px">
+  ⚠ The <code>data-name</code> values above must match the service names in your
+  ConsentManager's enforcement script. Check the <strong>Services Detected</strong>
+  panel in the dashboard — if names differ, update the <code>data-name</code>
+  attributes in this page's HTML accordingly.
+</p>
+
+<footer>enforcement-test.html — dev testing page for the Cookie Consent Management platform</footer>
+
+<script src="assets/test-helpers.js"></script>
+<script>
+// ── Setup helpers ────────────────────────────────────────────────────
+function applySetup() {
+  var backend = document.getElementById('inp-backend').value.trim().replace(/\/$/, '');
+  var cmid    = document.getElementById('inp-cmid').value.trim();
+  if (!cmid) { alert('Consent Manager ID is required'); return; }
+  localStorage.setItem('ccm_backend', backend);
+  localStorage.setItem('ccm_cmid', cmid);
+  location.href = location.pathname
+    + '?cmid=' + encodeURIComponent(cmid)
+    + '&backend=' + encodeURIComponent(backend);
+}
+
+function clearSetup() {
+  localStorage.removeItem('ccm_backend');
+  localStorage.removeItem('ccm_cmid');
+  location.href = location.pathname;
+}
+
+function openBanner() {
+  if (window.klaro && klaro.show) { klaro.show(); }
+  else { alert('Klaro not loaded — check enforcement script status above.'); }
+}
+
+function resetAll() {
+  // Clear Klaro consent
+  Object.keys(localStorage).forEach(function(k) {
+    if (k === 'klaro' || k.startsWith('klaro')) localStorage.removeItem(k);
+  });
+  // Delete cookies on this domain
+  document.cookie.split(';').forEach(function(c) {
+    var name = c.split('=')[0].trim();
+    var base = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    document.cookie = base;
+    document.cookie = base + '; domain=' + location.hostname;
+    document.cookie = base + '; domain=.' + location.hostname;
+  });
+  location.reload();
+}
+
+// ── Dashboard ────────────────────────────────────────────────────────
+function refreshDashboard() {
+  updateConsent();
+  updateServices();
+  updateSignals();
+  updateCookies();
+}
+
+function updateConsent() {
+  var raw = localStorage.getItem('klaro');
+  var el  = document.getElementById('dash-consent');
+  if (!raw) {
+    el.innerHTML = '<span class="pill pill-grey">No consent stored</span>';
+    return;
+  }
+  try {
+    var state = JSON.parse(raw);
+    el.innerHTML = Object.keys(state).map(function(k) {
+      var granted = state[k];
+      return '<span class="pill ' + (granted ? 'pill-green' : 'pill-red') + '">'
+           + k + ' ' + (granted ? '✓' : '✗') + '</span>';
+    }).join(' ') || '<em>empty</em>';
+  } catch (e) { el.textContent = raw; }
+}
+
+function updateServices() {
+  var el = document.getElementById('dash-services');
+  if (!window.klaroConfig || !Array.isArray(klaroConfig.services)) {
+    el.innerHTML = '<span class="pill pill-grey">Klaro config not loaded</span>';
+    return;
+  }
+  el.innerHTML = klaroConfig.services.map(function(s) {
+    return '<span class="pill pill-orange">' + s.name
+         + ' <em style="font-weight:normal">(' + (s.purposes || []).join(', ') + ')</em></span>';
+  }).join(' ');
+}
+
+function updateSignals() {
+  var el = document.getElementById('dash-signals');
+  var lines = [];
+
+  // Google Consent Mode — find most recent 'consent' entry in dataLayer
+  var dl = window.dataLayer || [];
+  var latestConsent = null;
+  for (var i = dl.length - 1; i >= 0; i--) {
+    var e = dl[i];
+    if (e && e[0] === 'consent') { latestConsent = e; break; }
+  }
+  if (latestConsent) {
+    lines.push('<strong>gtag consent:</strong> ' + latestConsent[1]
+      + ' ' + JSON.stringify(latestConsent[2]).substring(0, 180));
+  } else {
+    lines.push('<strong>gtag / dataLayer:</strong> '
+      + dl.length + ' entries, no consent event yet');
+  }
+
+  // Meta fbq
+  if (window.fbq) {
+    var q = window.fbq.queue || [];
+    lines.push('<strong>fbq:</strong> loaded — queue: '
+      + (q.length ? JSON.stringify(q).substring(0, 120) : 'empty (PageView fired)'));
+  } else {
+    lines.push('<strong>fbq:</strong> <span class="pill pill-red">not loaded (blocked)</span>');
+  }
+
+  // Bing uetq
+  var uetq = window.uetq;
+  if (uetq && typeof uetq.push === 'function' && uetq.length !== undefined) {
+    lines.push('<strong>uetq:</strong> loaded — ' + uetq.length + ' entries: ' + JSON.stringify(uetq).substring(0, 120));
+  } else {
+    lines.push('<strong>uetq:</strong> <span class="pill pill-red">not loaded (blocked)</span>');
+  }
+
+  // Clarity
+  lines.push('<strong>clarity:</strong> '
+    + (typeof window.clarity === 'function'
+       ? '<span class="pill pill-green">loaded</span>'
+       : '<span class="pill pill-red">not loaded (blocked)</span>'));
+
+  el.innerHTML = lines.map(function(l) {
+    return '<div class="sig-line">' + l + '</div>';
+  }).join('');
+}
+
+var KNOWN_CATS = {
+  '_ga':'Analytics','_gcl_au':'Marketing','_fbp':'Marketing','_fbc':'Marketing',
+  '_uetsid':'Marketing','_uetvid':'Marketing','MUID':'Marketing',
+  '_clck':'Analytics','_clsk':'Analytics','CLID':'Analytics','ANONCHK':'Marketing',
+  'MR':'Marketing','SRM_B':'Marketing','ak_bmsc':'Functional','bm_sz':'Functional',
+  'bm_sv':'Functional','_abck':'Functional','IDE':'Marketing','test_cookie':'Marketing',
+  '_ga_89RWJTCPLZ':'Analytics'
+};
+
+function updateCookies() {
+  var el  = document.getElementById('dash-cookies');
+  var raw = document.cookie.split(';').map(function(c){ return c.trim(); }).filter(Boolean);
+  if (!raw.length) { el.innerHTML = '<em style="font-size:12px">No cookies</em>'; return; }
+  var rows = raw.map(function(c) {
+    var eq   = c.indexOf('=');
+    var name = eq >= 0 ? c.substring(0, eq).trim() : c.trim();
+    var val  = eq >= 0 ? c.substring(eq + 1) : '';
+    var cat  = KNOWN_CATS[name] || '?';
+    var col  = cat === 'Analytics' ? '#2e86c1' : cat === 'Marketing' ? '#e74c3c'
+             : cat === 'Functional' ? '#27ae60' : '#888';
+    return '<tr>'
+      + '<td>' + name + '</td>'
+      + '<td><span style="color:' + col + ';font-weight:bold;font-size:11px">' + cat + '</span></td>'
+      + '<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + val + '">'
+      + val.substring(0, 22) + (val.length > 22 ? '…' : '') + '</td>'
+      + '</tr>';
+  }).join('');
+  el.innerHTML = '<table class="ct"><thead><tr><th>Name</th><th>Category</th><th>Value</th></tr></thead><tbody>'
+               + rows + '</tbody></table>';
+}
+
+// ── Page init ────────────────────────────────────────────────────────
+(function init() {
+  var params  = new URLSearchParams(location.search);
+  var cmid    = params.get('cmid')    || localStorage.getItem('ccm_cmid') || '';
+  var backend = params.get('backend') || localStorage.getItem('ccm_backend') || 'http://localhost:8080';
+
+  document.getElementById('inp-backend').value = backend;
+  document.getElementById('inp-cmid').value    = cmid;
+
+  if (!cmid) return;   // no ID → just show setup panel
+
+  document.getElementById('status-panel').style.display = 'block';
+  document.getElementById('dashboard').style.display    = 'block';
+
+  var ccm = window._ccm || {};
+  var statusEl = document.getElementById('script-status');
+  if (ccm.loaded) {
+    statusEl.innerHTML = '<span class="ok">✓ Enforcement script loaded</span>'
+      + ' &nbsp;<span class="pill pill-grey">backend: ' + ccm.backend + '</span>'
+      + ' &nbsp;<span class="pill pill-grey">cmid: ' + ccm.cmid + '</span>';
+  } else if (ccm.error) {
+    statusEl.innerHTML = '<span class="err">✗ Load failed: ' + ccm.error + '</span>'
+      + '<br><small style="color:#666">Verify backend is running at <strong>' + ccm.backend
+      + '</strong> and the cmid exists.</small>';
+  } else {
+    statusEl.innerHTML = '<span class="err">✗ Enforcement script not loaded (no cmid resolved)</span>';
+  }
+
+  setTimeout(refreshDashboard, 900);   // initial load after Klaro settles
+  setInterval(refreshDashboard, 3000); // keep dashboard live
+})();
+</script>
+</body>
+</html>
