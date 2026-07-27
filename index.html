@@ -4,18 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Site — Homepage</title>
+  <link rel="stylesheet" href="https://devop.pre-dataprivacy.com/cmapi/dynamic/v1/config/css/6a60909ec80b553d91464f0c"/>
+  <script type="application/javascript" src="https://devop.pre-dataprivacy.com/cmapi/dynamic/v1/config/js/6a60909ec80b553d91464f0c"></script>
   <meta name="google-adsense-account" content="ca-pub-7344776715655315">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7344776715655315"
      crossorigin="anonymous"></script>
   <link rel="stylesheet" href="assets/style.css">
   <!-- Functional cookies: user preferences & session state -->
-  <script>
+  <script type="text/plain" 
+          data-type="application/javascript"
+          data-name="functional">
     document.cookie = 'user_prefs={"lang":"en","theme":"light"}; path=/; max-age=86400';
     document.cookie = 'session_id=sess-abc123xyz; path=/; max-age=1800';
     console.log('Functional cookies set: user_prefs, session_id');
   </script>
   <!-- Fake marketing pixel (inline script that sets a cookie) -->
-  <script>
+  <script type="text/plain" 
+          data-type="application/javascript"
+          data-name="marketing">
     document.cookie = 'marketing_id=test-user-123; path=/; max-age=3600';
     console.log('Marketing pixel inline script executed');
   </script>
@@ -53,6 +59,34 @@
     <li><strong>[Functional]</strong> <code>session_id</code> — maintains session state (30 min) — <em>dummy</em></li>
     <li><strong>[Marketing]</strong> <code>marketing_id</code> — fake marketing pixel (1 hour) — <em>dummy</em></li>
   </ul>
+  <style>
+  .pc-preference-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #1b4f72;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .pc-preference-btn:hover {
+    background-color: #0f3849;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+</style>
+
+<button type="button" class="pc-preference-btn" style="display:none;" id="preferencesBtn" onclick="PrivacyConsent.openPreferenceCentre(false)" title="Manage Cookie Preferences">⚙️</button>
+<!-- Cookie Preference Centre Launcher 
   <footer>
     Cookie Consent Test Site — Developer testing environment only.
   </footer>
